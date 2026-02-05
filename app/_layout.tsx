@@ -8,7 +8,7 @@ import { store } from '../store/store';
 import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
 import { checkAuthStatus } from '../store/slices/authSlice';
 import { Loading } from '../components/ui';
-import '../global.css';
+
 
 function RootLayoutNav() {
     const dispatch = useAppDispatch();
