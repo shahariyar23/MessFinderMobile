@@ -2,9 +2,9 @@ import React from 'react';
 import { View, Text, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Target, Users, Shield, Zap } from 'lucide-react-native';
-import { Colors } from '../../../constants';
+import { Colors } from '../../constants';
 
-export default function About Screen() {
+export default function AboutScreen() {
     const features = [
         {
             icon: Target,

@@ -82,7 +82,7 @@ export default function PaymentHistory() {
                     </Text>
                     <Text className="text-sm text-gray-500 mt-1">{item.user.name}</Text>
                 </View>
-                <Badge label={item.status} variant={getStatusVariant(item.status)} />
+                <Badge text={item.status} variant={getStatusVariant(item.status)} />
             </View>
 
             <View className="flex-row justify-between items-center">
@@ -163,7 +163,7 @@ export default function PaymentHistory() {
                                         ৳{selectedPayment.amount}
                                     </Text>
                                     <Badge
-                                        label={selectedPayment.status}
+                                        text={selectedPayment.status}
                                         variant={getStatusVariant(selectedPayment.status)}
                                     />
                                 </View>

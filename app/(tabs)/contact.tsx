@@ -10,8 +10,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Mail, Phone, MapPin, Send, MessageCircle } from 'lucide-react-native';
 import Toast from 'react-native-toast-message';
-import { Colors } from '../../../constants';
-import { Button } from '../../../components/ui';
+import { Colors } from '../../constants';
+import { Button } from '../../components/ui';
 
 export default function ContactScreen() {
     const [name, setName] = useState('');

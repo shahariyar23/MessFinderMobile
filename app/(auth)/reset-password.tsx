@@ -12,10 +12,10 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Lock, Eye, EyeOff } from 'lucide-react-native';
 import Toast from 'react-native-toast-message';
-import { Colors } from '../../../constants';
-import { Button, Input } from '../../../components/ui';
-import { useAppDispatch } from '../../../hooks/useRedux';
-import { resetPassword } from '../../../store/slices/authSlice';
+import { Colors } from '../../constants';
+import { Button, Input } from '../../components/ui';
+import { useAppDispatch } from '../../hooks/useRedux';
+import { resetPassword } from '../../store/slices/authSlice';
 
 export default function ResetPasswordScreen() {
     const router = useRouter();
@@ -117,7 +117,7 @@ export default function ResetPasswordScreen() {
                                     onChangeText={setNewPassword}
                                     secureTextEntry={!showPassword}
                                     autoCapitalize="none"
-                                    leftIcon={<Lock size={20} color={Colors.gray[400]} />}
+                                    icon={<Lock size={20} color={Colors.gray[400]} />}
                                 />
                                 <TouchableOpacity
                                     onPress={() => setShowPassword(!showPassword)}
@@ -142,7 +142,7 @@ export default function ResetPasswordScreen() {
                                     onChangeText={setConfirmPassword}
                                     secureTextEntry={!showConfirmPassword}
                                     autoCapitalize="none"
-                                    leftIcon={<Lock size={20} color={Colors.gray[400]} />}
+                                    icon={<Lock size={20} color={Colors.gray[400]} />}
                                 />
                                 <TouchableOpacity
                                     onPress={() => setShowConfirmPassword(!showConfirmPassword)}

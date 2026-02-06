@@ -69,14 +69,14 @@ export default function StudentActivity() {
             className="bg-white rounded-2xl p-4 mb-3 shadow-sm"
         >
             <View className="flex-row items-center">
-                <Avatar name={item.name} size={50} />
+                <Avatar name={item.name} size="lg" />
                 <View className="flex-1 ml-3">
                     <Text className="text-base font-bold text-gray-800">{item.name}</Text>
                     <Text className="text-sm text-gray-500 mt-1">{item.email}</Text>
                     <Text className="text-sm text-gray-400 mt-1">{item.phone}</Text>
                 </View>
                 <Badge
-                    label={item.isActive ? 'Active' : 'Inactive'}
+                    text={item.isActive ? 'Active' : 'Inactive'}
                     variant={item.isActive ? 'success' : 'error'}
                 />
             </View>
@@ -137,12 +137,12 @@ export default function StudentActivity() {
                         {selectedStudent && (
                             <View>
                                 <View className="items-center mb-6">
-                                    <Avatar name={selectedStudent.name} size={80} />
+                                    <Avatar name={selectedStudent.name} size="xl" />
                                     <Text className="text-xl font-bold text-gray-800 mt-3">
                                         {selectedStudent.name}
                                     </Text>
                                     <Badge
-                                        label={selectedStudent.isActive ? 'Active' : 'Inactive'}
+                                        text={selectedStudent.isActive ? 'Active' : 'Inactive'}
                                         variant={selectedStudent.isActive ? 'success' : 'error'}
                                     />
                                 </View>

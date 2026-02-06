@@ -11,15 +11,15 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ShieldCheck } from 'lucide-react-native';
 import Toast from 'react-native-toast-message';
-import { Colors } from '../../../constants';
-import { Button } from '../../../components/ui';
-import { useAppDispatch, useAppSelector } from '../../../hooks/useRedux';
-import { verifyOTP } from '../../../store/slices/authSlice';
+import { Colors } from '../../constants';
+import { Button } from '../../components/ui';
+import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
+import { verifyOTP } from '../../store/slices/authSlice';
 
 export default function VerifyLoginOTPScreen() {
     const router = useRouter();
     const dispatch = useAppDispatch();
-    const { otpEmail, isLoading } = useAppSelector((state) => state.auth);
+    const { otpEmail, isLoading } = useAppSelector((state: any) => state.auth);
 
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
     const inputRefs = useRef<(TextInput | null)[]>([]);
@@ -120,7 +120,7 @@ export default function VerifyLoginOTPScreen() {
                             {otp.map((digit, index) => (
                                 <TextInput
                                     key={index}
-                                    ref={(ref) => (inputRefs.current[index] = ref)}
+                                    ref={(ref) => { inputRefs.current[index] = ref; }}
                                     value={digit}
                                     onChangeText={(value) => handleOtpChange(value, index)}
                                     onKeyPress={(e) => handleKeyPress(e, index)}

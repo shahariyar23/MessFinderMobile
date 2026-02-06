@@ -78,7 +78,7 @@ export default function AdminBookingDashboard() {
                         </Text>
                         <Text className="text-sm text-gray-500 mt-1">{userName}</Text>
                     </View>
-                    <Badge label={item.bookingStatus} variant={getStatusVariant(item.bookingStatus)} />
+                    <Badge text={item.bookingStatus} variant={getStatusVariant(item.bookingStatus)} />
                 </View>
 
                 <View className="flex-row justify-between items-center">
@@ -88,7 +88,7 @@ export default function AdminBookingDashboard() {
                             Check-in: {new Date(item.checkInDate).toLocaleDateString()}
                         </Text>
                     </View>
-                    <Badge label={item.paymentStatus} variant={getStatusVariant(item.paymentStatus)} />
+                    <Badge text={item.paymentStatus} variant={getStatusVariant(item.paymentStatus)} />
                 </View>
             </TouchableOpacity>
         );
@@ -183,14 +183,14 @@ export default function AdminBookingDashboard() {
                                         <View className="flex-1">
                                             <Text className="text-sm font-medium text-gray-500">Booking Status</Text>
                                             <Badge
-                                                label={selectedBooking.bookingStatus}
+                                                text={selectedBooking.bookingStatus}
                                                 variant={getStatusVariant(selectedBooking.bookingStatus)}
                                             />
                                         </View>
                                         <View className="flex-1">
                                             <Text className="text-sm font-medium text-gray-500">Payment Status</Text>
                                             <Badge
-                                                label={selectedBooking.paymentStatus}
+                                                text={selectedBooking.paymentStatus}
                                                 variant={getStatusVariant(selectedBooking.paymentStatus)}
                                             />
                                         </View>

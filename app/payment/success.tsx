@@ -3,8 +3,8 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CheckCircle } from 'lucide-react-native';
-import { Colors } from '../../../constants';
-import { Button } from '../../../components/ui';
+import { Colors } from '../../constants';
+import { Button } from '../../components/ui';
 
 export default function PaymentSuccess() {
     const router = useRouter();
