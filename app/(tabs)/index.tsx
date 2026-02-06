@@ -118,7 +118,7 @@ export default function HomeScreen() {
                             }}
                             renderItem={({ item }) => (
                                 <Image
-                                    source={{ uri: item.image.url }}
+                                    source={{ uri: item.image?.url || 'https://via.placeholder.com/400x160' }}
                                     style={{ width: width - 32, height: 160, marginHorizontal: 16 }}
                                     className="rounded-2xl"
                                     resizeMode="cover"

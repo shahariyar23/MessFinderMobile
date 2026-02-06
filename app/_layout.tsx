@@ -6,7 +6,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import { store } from '../store/store';
 import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
-import { checkAuthStatus } from '../store/slices/authSlice';
+import { checkAuthStatus, setRedirectPath, clearRedirectPath } from '../store/slices/authSlice';
 import { Loading } from '../components/ui';
 
 
@@ -14,7 +14,7 @@ function RootLayoutNav() {
     const dispatch = useAppDispatch();
     const router = useRouter();
     const segments = useSegments();
-    const { isAuthenticated, isLoading } = useAppSelector((state) => state.auth);
+    const { isAuthenticated, isLoading, user, redirectPath } = useAppSelector((state) => state.auth);
 
     useEffect(() => {
         dispatch(checkAuthStatus());
@@ -24,15 +24,51 @@ function RootLayoutNav() {
         if (isLoading) return;
 
         const inAuthGroup = segments[0] === '(auth)';
+        const inAdminGroup = segments[0] === '(admin)';
 
+        // Not authenticated - redirect to login and save current path
         if (!isAuthenticated && !inAuthGroup) {
-            // Redirect to login if not authenticated
+            // Save the current path they were trying to access
+            const currentPath = segments.join('/');
+            if (currentPath && currentPath !== '(tabs)') {
+                dispatch(setRedirectPath(`/${currentPath}`));
+            }
             router.replace('/(auth)/login');
-        } else if (isAuthenticated && inAuthGroup) {
-            // Redirect to home if authenticated but in auth screens
-            router.replace('/(tabs)');
+            return;
         }
-    }, [isAuthenticated, isLoading, segments]);
+
+        // Authenticated - handle role-based navigation
+        if (isAuthenticated && user) {
+            // If in auth screens, redirect based on role and redirectPath
+            if (inAuthGroup) {
+                // If there's a redirect path, go there
+                if (redirectPath) {
+                    router.replace(redirectPath as any);
+                    dispatch(clearRedirectPath());
+                } else {
+                    // Role-based default redirect
+                    if (user.role === 'admin') {
+                        router.replace('/(admin)');
+                    } else {
+                        router.replace('/(tabs)');
+                    }
+                }
+                return;
+            }
+
+            // Prevent non-admins from accessing admin routes
+            if (inAdminGroup && user.role !== 'admin') {
+                router.replace('/(tabs)');
+                return;
+            }
+
+            // Redirect admin to admin panel if they try to access tabs
+            if (segments[0] === '(tabs)' && user.role === 'admin') {
+                router.replace('/(admin)');
+                return;
+            }
+        }
+    }, [isAuthenticated, isLoading, segments, user, redirectPath]);
 
     if (isLoading) {
         return <Loading fullScreen text="Loading..." />;
@@ -49,6 +85,7 @@ function RootLayoutNav() {
             >
                 <Stack.Screen name="(auth)" options={{ headerShown: false }} />
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="(admin)" options={{ headerShown: false }} />
                 <Stack.Screen
                     name="mess/[id]"
                     options={{

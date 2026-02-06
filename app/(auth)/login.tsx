@@ -52,6 +52,7 @@ export default function LoginScreen() {
 
         try {
             const result = await dispatch(login({ email, password })).unwrap();
+            console.log(result, "login result");
             Toast.show({
                 type: 'success',
                 text1: 'OTP Sent',

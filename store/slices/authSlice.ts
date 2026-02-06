@@ -4,7 +4,7 @@ import { AuthState, User, LoginCredentials, RegisterData, OTPVerifyData } from '
 import { StorageKeys } from '../../constants';
 import authService from '../../services/authService';
 
-const initialState: AuthState = {
+const initialState: AuthState & { redirectPath: string | null } = {
     user: null,
     token: null,
     isAuthenticated: false,
@@ -12,6 +12,7 @@ const initialState: AuthState = {
     error: null,
     otpRequired: false,
     otpEmail: null,
+    redirectPath: null, // Track where user was trying to go before login
 };
 
 // Check if user is authenticated on app start
@@ -53,8 +54,11 @@ export const login = createAsyncThunk(
     'auth/login',
     async (credentials: LoginCredentials, { rejectWithValue }) => {
         try {
+            console.log(credentials, "login credentials");
             const response = await authService.login(credentials);
-            return { email: credentials.email, ...response.data };
+
+            console.log(response, "login response");
+            return { ...response.data, email: credentials.email };
         } catch (error: any) {
             return rejectWithValue(error.message || 'Login failed');
         }
@@ -127,6 +131,12 @@ const authSlice = createSlice({
         setUser: (state, action: PayloadAction<User>) => {
             state.user = action.payload;
             state.isAuthenticated = true;
+        },
+        setRedirectPath: (state, action: PayloadAction<string>) => {
+            state.redirectPath = action.payload;
+        },
+        clearRedirectPath: (state) => {
+            state.redirectPath = null;
         },
     },
     extraReducers: (builder) => {
@@ -235,5 +245,5 @@ const authSlice = createSlice({
     },
 });
 
-export const { clearError, clearOTPState, setUser } = authSlice.actions;
+export const { clearError, clearOTPState, setUser, setRedirectPath, clearRedirectPath } = authSlice.actions;
 export default authSlice.reducer;
