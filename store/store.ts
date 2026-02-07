@@ -3,6 +3,7 @@ import authReducer from './slices/authSlice';
 import messReducer from './slices/messSlice';
 import favoriteReducer from './slices/favoriteSlice';
 import bookingReducer from './slices/bookingSlice';
+import reviewReducer from './slices/reviewSlice';
 
 export const store = configureStore({
     reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
         mess: messReducer,
         favorites: favoriteReducer,
         booking: bookingReducer,
+        reviews: reviewReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({

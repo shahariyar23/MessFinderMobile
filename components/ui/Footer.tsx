@@ -34,7 +34,7 @@ export const Footer = () => {
             {/* Separator */}
             <View className="h-[1px] bg-gray-200 w-[90%] mx-auto mb-6" />
 
-            <View className="bg-gray-50 pt-10 pb-20 px-6 rounded-t-3xl shadow-sm">
+            <View className="bg-gray-50 pt-10 pb-20 rounded-t-3xl shadow-sm">
                 {/* Brand Section */}
                 <View className="items-center mb-8">
                     {/* Logo & Title Lockup */}
@@ -101,7 +101,7 @@ export const Footer = () => {
 
                 {/* Footer Bottom */}
                 <View className="border-t border-gray-200 pt-6 items-center">
-                    <Text className="text-gray-400 text-xs mb-2">
+                    <Text className="text-gray-400 text-xs">
                         © {new Date().getFullYear()} MessFinder. All rights reserved.
                     </Text>
                     <View className="flex-row items-center">

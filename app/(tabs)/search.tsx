@@ -129,7 +129,7 @@ export default function SearchScreen() {
     return (
         <SafeAreaView className="flex-1 bg-gray-200" edges={['top']}>
             {/* Search Header */}
-            <View className="bg-white px-4 pt-4 pb-4 shadow-sm">
+            <View className="bg-white px-4 pt-4 pb-4 shadow-sm rounded-t-3xl mx-4">
                 <View className="flex-row items-center gap-3 mb-2">
                     <View className="flex-1 flex-row items-center bg-gray-100 rounded-xl px-4 py-3">
                         <Search size={20} color={Colors.gray[400]} />
@@ -170,7 +170,7 @@ export default function SearchScreen() {
                                     loadMesses(1);
                                 }
                             }}
-                            className={`px-4 py-2 rounded-full ${filter === 'All' ? 'bg-primary-500' : 'bg-gray-100'
+                            className={`px-3 py-2 rounded-full ${filter === 'All' ? 'bg-primary-500' : 'bg-gray-100'
                                 }`}
                         >
                             <Text className={filter === 'All' ? 'text-white font-medium' : 'text-gray-600'}>

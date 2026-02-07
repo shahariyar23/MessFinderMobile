@@ -141,20 +141,20 @@ export default function HomeScreen() {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-gray-200" edges={['top']}>
+        <SafeAreaView className="flex-1 bg-gray-200 dark:bg-black" edges={['top']}>
             <ScrollView
                 className="flex-1"
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                 showsVerticalScrollIndicator={false}
             >
                 {/* Header */}
-                <View className="bg-white px-5 pt-4 pb-5 rounded-3xl mx-3">
+                <View className="bg-white dark:bg-gray-900 px-5 pt-4 pb-5 rounded-3xl mx-3">
                     <View className="flex-row justify-between items-center mb-4">
                         <View>
-                            <Text className="text-gray-500 text-sm">{getGreeting()}</Text>
+                            <Text className="text-gray-500 dark:text-gray-400 text-sm">{getGreeting()}</Text>
                             <Text className="text-green-500 text-xl font-bold">{user?.name || 'Guest'}</Text>
                         </View>
-                        <TouchableOpacity className="w-11 h-11 bg-green-100 rounded-full items-center justify-center">
+                        <TouchableOpacity className="w-11 h-11 bg-green-100 dark:bg-green-900 rounded-full items-center justify-center">
                             <Bell size={22} color={Colors.primary[500]} />
                         </TouchableOpacity>
                     </View>
@@ -188,7 +188,7 @@ export default function HomeScreen() {
                                 {sliders.map((_, index) => (
                                     <View
                                         key={index}
-                                        className={`h-2 rounded-full ${index === activeSlide ? 'w-6 bg-primary-500' : 'w-2 bg-gray-300'
+                                        className={`h-2 rounded-full ${index === activeSlide ? 'w-6 bg-primary-500' : 'w-2 bg-gray-300 dark:bg-gray-700'
                                             }`}
                                     />
                                 ))}
@@ -199,22 +199,22 @@ export default function HomeScreen() {
 
                 {/* Quick Stats */}
                 <View className="flex-row px-4 mx-auto gap-3">
-                    <View className="flex-1 bg-primary-50 rounded-2xl p-4">
-                        <Text className="text-primary-600 text-2xl font-bold">
+                    <View className="flex-1 bg-primary-50 dark:bg-primary-900 rounded-2xl p-4">
+                        <Text className="text-primary-600 dark:text-primary-300 text-2xl font-bold">
                             {messes.filter((m) => m.status === 'free').length}+
                         </Text>
-                        <Text className="text-primary-700 text-sm">Available Messes</Text>
+                        <Text className="text-primary-700 dark:text-primary-200 text-sm">Available Messes</Text>
                     </View>
-                    <View className="flex-1 bg-secondary-50 rounded-2xl p-4">
-                        <Text className="text-secondary-600 text-2xl font-bold">{messes.length}+</Text>
-                        <Text className="text-secondary-700 text-sm">Total Listings</Text>
+                    <View className="flex-1 bg-secondary-50 dark:bg-secondary-900 rounded-2xl p-4">
+                        <Text className="text-secondary-600 dark:text-secondary-300 text-2xl font-bold">{messes.length}+</Text>
+                        <Text className="text-secondary-700 dark:text-secondary-200 text-sm">Total Listings</Text>
                     </View>
                 </View>
 
                 {/* Featured Messes */}
                 <View className="mt-6 px-4">
                     <View className="flex-row justify-between items-center mb-4">
-                        <Text className="text-gray-800 text-lg font-bold">Featured Messes</Text>
+                        <Text className="text-gray-800 dark:text-white text-lg font-bold">Featured Messes</Text>
                         <TouchableOpacity
                             onPress={() => router.push('/(tabs)/search')}
                             className="flex-row items-center"
@@ -227,9 +227,9 @@ export default function HomeScreen() {
                     {isLoading ? (
                         <Loading text="Loading messes..." />
                     ) : messes.length === 0 ? (
-                        <View className="bg-white rounded-2xl p-8 items-center">
+                        <View className="bg-white dark:bg-gray-900 rounded-2xl p-8 items-center">
                             <MapPin size={48} color={Colors.gray[300]} />
-                            <Text className="text-gray-500 mt-4 text-center">
+                            <Text className="text-gray-500 dark:text-gray-400 mt-4 text-center">
                                 No messes available at the moment
                             </Text>
                         </View>
@@ -250,7 +250,6 @@ export default function HomeScreen() {
                 <Footer />
 
                 {/* Bottom Padding for Tab Bar */}
-                <View className="h-24" />
             </ScrollView>
         </SafeAreaView>
     );

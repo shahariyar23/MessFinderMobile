@@ -8,13 +8,16 @@ import { store } from '../store/store';
 import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
 import { checkAuthStatus, setRedirectPath, clearRedirectPath } from '../store/slices/authSlice';
 import { Loading } from '../components/ui';
+import { useColorScheme } from 'nativewind';
 
+// ... imports
 
 function RootLayoutNav() {
     const dispatch = useAppDispatch();
     const router = useRouter();
     const segments = useSegments();
     const { isAuthenticated, isLoading, user, redirectPath } = useAppSelector((state) => state.auth);
+    const { colorScheme } = useColorScheme();
 
     useEffect(() => {
         dispatch(checkAuthStatus());
@@ -90,11 +93,13 @@ function RootLayoutNav() {
 
     return (
         <>
-            <StatusBar style="dark" />
+            <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
             <Stack
                 screenOptions={{
                     headerShown: false,
                     animation: 'slide_from_right',
+                    headerBackTitle: 'Back',
+                    contentStyle: { backgroundColor: colorScheme === 'dark' ? '#111827' : '#f8fafc' }, // gray-900 vs gray-50
                 }}
             >
                 <Stack.Screen name="(auth)" options={{ headerShown: false }} />
@@ -129,6 +134,14 @@ function RootLayoutNav() {
                         headerShown: true,
                         title: 'Payment',
                         presentation: 'fullScreenModal',
+                    }}
+                />
+                <Stack.Screen
+                    name="reviews/index"
+                    options={{
+                        headerShown: true,
+                        title: 'My Reviews',
+                        headerBackTitle: 'Back',
                     }}
                 />
             </Stack>

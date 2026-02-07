@@ -16,6 +16,12 @@ export const authService = {
         return response.data;
     },
 
+    // Update user profile
+    async updateProfile(userId: string, data: { name: string }): Promise<ApiResponse<User>> {
+        const response = await api.put(`/user/update-profile/${userId}`, data);
+        return response.data;
+    },
+
     // Login - Step 1: Request OTP
     async login(credentials: LoginCredentials): Promise<ApiResponse<{ otpRequired: boolean; email: string }>> {
         const response = await api.post('/user/login', credentials);
