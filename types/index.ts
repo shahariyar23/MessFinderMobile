@@ -242,7 +242,13 @@ export interface CustomerInfo {
 // Home Slider
 export interface HomeSlider {
     _id: string;
-    image: MessImage;
+    title: string;
+    description: string;
+    buttonText: string;
+    buttonLink: string;
+    backgroundImage: MessImage;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 // Navigation Types
