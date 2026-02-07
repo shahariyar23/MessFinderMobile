@@ -39,8 +39,8 @@ export default function FavoritesScreen() {
                 const messData = (item as any).mess || item.mess_id;
 
                 // If mess is already a populated object
-                if (messData && typeof messData === 'object' && messData._id) {
-                    console.log('✅ mess is already populated:', messData._id);
+                if (messData && typeof messData === 'object' && messData._id && messData.view !== undefined) {
+                    console.log('✅ mess is already populated and has view count:', messData._id);
                     populated.push({ _id: itemId, mess: messData as Mess });
                 }
                 // If mess is just a string ID, fetch the full mess details

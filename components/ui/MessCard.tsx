@@ -62,9 +62,11 @@ export const MessCard: React.FC<MessCardProps> = ({
                         className="w-full h-32"
                         resizeMode="cover"
                     />
-                    <View className={`absolute top-2 left-2 px-2 py-1 rounded-full ${getStatusColor(mess.status)}`}>
-                        <Text className="text-white text-xs font-medium">{getStatusText(mess.status)}</Text>
-                    </View>
+                    {mess.status && (
+                        <View className={`absolute top-2 left-2 px-2 py-1 rounded-full ${getStatusColor(mess.status)}`}>
+                            <Text className="text-white text-xs font-medium">{getStatusText(mess.status)}</Text>
+                        </View>
+                    )}
                     {onFavoritePress && (
                         <TouchableOpacity
                             onPress={onFavoritePress}
@@ -118,9 +120,11 @@ export const MessCard: React.FC<MessCardProps> = ({
                     className="w-full h-48"
                     resizeMode="cover"
                 />
-                <View className={`absolute top-3 left-3 px-3 py-1.5 rounded-full ${getStatusColor(mess.status)}`}>
-                    <Text className="text-white text-xs font-semibold">{getStatusText(mess.status)}</Text>
-                </View>
+                {mess.status && (
+                    <View className={`absolute top-3 left-3 px-3 py-1.5 rounded-full ${getStatusColor(mess.status)}`}>
+                        <Text className="text-white text-xs font-semibold">{getStatusText(mess.status)}</Text>
+                    </View>
+                )}
                 {onFavoritePress && (
                     <TouchableOpacity
                         onPress={onFavoritePress}
