@@ -48,6 +48,7 @@ export default function MessDetailScreen() {
     const [reviews, setReviews] = useState<Review[]>([]);
     const [isSaved, setIsSaved] = useState(false);
     const [loadError, setLoadError] = useState<string | null>(null);
+    const [viewCount, setViewCount] = useState(0);
 
     useEffect(() => {
         // Wait for auth check to complete
@@ -67,6 +68,12 @@ export default function MessDetailScreen() {
                 .unwrap()
                 .then((data) => {
                     console.log('✅ Mess details loaded successfully:', data?.title);
+                    // Set initial view count and increment it
+                    if (data?.view !== undefined) {
+                        setViewCount(data.view + 1);
+                    }
+                    // Increment view count on the server
+                    messService.incrementMessView(id).catch(console.log);
                 })
                 .catch((error) => {
                     console.error('❌ Failed to load mess details:', error);
@@ -77,7 +84,10 @@ export default function MessDetailScreen() {
     }, [id, isAuthenticated, authLoading]);
 
     useEffect(() => {
-        setIsSaved(savedMesses.some((item) => item.mess_id._id === id));
+        setIsSaved(savedMesses?.some((item) => {
+            const itemMessId = typeof item.mess_id === 'object' ? item.mess_id?._id : item.mess_id;
+            return itemMessId === id;
+        }) || false);
     }, [savedMesses, id]);
 
     const loadReviews = async () => {
@@ -173,25 +183,25 @@ export default function MessDetailScreen() {
                     headerLeft: () => (
                         <TouchableOpacity
                             onPress={() => router.back()}
-                            className="w-10 h-10 bg-white/90 rounded-full items-center justify-center ml-2"
+                            className="w-10 h-10 rounded-full items-center justify-center"
                         >
-                            <ChevronLeft size={24} color={Colors.gray[800]} />
+                            <ChevronLeft size={24} color="#0e0505ff" />
                         </TouchableOpacity>
                     ),
                     headerRight: () => (
-                        <View className="flex-row gap-2 mr-2">
+                        <View className="flex-row gap-2">
                             <TouchableOpacity
                                 onPress={handleFavoriteToggle}
-                                className="w-10 h-10 bg-white/90 rounded-full items-center justify-center"
+                                className="w-10 h-10 rounded-full items-center justify-center"
                             >
                                 <Heart
                                     size={20}
-                                    color={isSaved ? Colors.error : Colors.gray[800]}
+                                    color={isSaved ? Colors.error : '#0e0505ff'}
                                     fill={isSaved ? Colors.error : 'transparent'}
                                 />
                             </TouchableOpacity>
-                            <TouchableOpacity className="w-10 h-10 bg-white/90 rounded-full items-center justify-center">
-                                <Share2 size={20} color={Colors.gray[800]} />
+                            <TouchableOpacity className="w-10 h-10 rounded-full items-center justify-center">
+                                <Share2 size={20} color="#0e0505ff" />
                             </TouchableOpacity>
                         </View>
                     ),
@@ -230,7 +240,7 @@ export default function MessDetailScreen() {
                     </View>
                     <View className="absolute bottom-4 right-4 flex-row items-center bg-black/50 px-3 py-1.5 rounded-full">
                         <Eye size={14} color="#fff" />
-                        <Text className="text-white text-sm ml-1.5">{currentMess.view} views</Text>
+                        <Text className="text-white text-sm ml-1.5">{viewCount || currentMess.view} views</Text>
                     </View>
                 </View>
 
@@ -402,21 +412,22 @@ export default function MessDetailScreen() {
                 edges={['bottom']}
                 className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-5 py-4"
             >
-                <View className="flex-row items-center gap-4">
+                <View className="flex-row items-center gap-3">
                     <TouchableOpacity
                         onPress={handleCall}
-                        className="w-14 h-14 bg-gray-100 rounded-xl items-center justify-center"
+                        className="w-14 h-14 bg-primary-50 rounded-xl items-center justify-center border border-primary-200"
                     >
                         <Phone size={24} color={Colors.primary[500]} />
                     </TouchableOpacity>
-                    <Button
-                        title={currentMess.status === 'free' ? 'Book Now' : 'Not Available'}
-                        onPress={handleBook}
-                        disabled={currentMess.status !== 'free'}
-                        fullWidth
-                        size="lg"
-                        className="flex-1"
-                    />
+                    <View className="flex-1">
+                        <Button
+                            title={currentMess.status === 'free' ? 'Book Now' : 'Not Available'}
+                            onPress={handleBook}
+                            disabled={currentMess.status !== 'free'}
+                            fullWidth
+                            size="lg"
+                        />
+                    </View>
                 </View>
             </SafeAreaView>
         </>

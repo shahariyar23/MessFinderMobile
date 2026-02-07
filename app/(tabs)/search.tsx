@@ -27,7 +27,7 @@ export default function SearchScreen() {
     const router = useRouter();
     const dispatch = useAppDispatch();
     const { messes, isLoading, pagination, filters } = useAppSelector((state) => state.mess);
-    const { savedMesses } = useAppSelector((state) => state.favorites);
+    const savedMesses = useAppSelector((state) => state.favorites?.savedMesses ?? []);
 
     const [searchQuery, setSearchQuery] = useState('');
     const [showFilters, setShowFilters] = useState(false);
@@ -36,7 +36,7 @@ export default function SearchScreen() {
         location: '',
         roomType: '',
         genderPreference: '',
-        sortBy: 'createdAt' as string,
+        sortBy: 'createdAt' as 'createdAt' | 'price' | 'rating' | 'views',
         sortOrder: 'desc' as 'asc' | 'desc',
     });
 
@@ -88,7 +88,10 @@ export default function SearchScreen() {
     };
 
     const isFavorite = (messId: string) => {
-        return savedMesses.some((item) => item.mess_id._id === messId);
+        return savedMesses?.some((item) => {
+            const itemMessId = typeof item.mess_id === 'object' ? item.mess_id?._id : item.mess_id;
+            return itemMessId === messId;
+        }) || false;
     };
 
     const handleFavoriteToggle = (messId: string) => {
@@ -232,8 +235,8 @@ export default function SearchScreen() {
                                             }))
                                         }
                                         className={`px-4 py-2 rounded-full border ${localFilters.roomType === type
-                                                ? 'bg-primary-500 border-primary-500'
-                                                : 'border-gray-300'
+                                            ? 'bg-primary-500 border-primary-500'
+                                            : 'border-gray-300'
                                             }`}
                                     >
                                         <Text
@@ -262,8 +265,8 @@ export default function SearchScreen() {
                                             }))
                                         }
                                         className={`flex-1 py-3 rounded-xl border items-center ${localFilters.genderPreference === pref
-                                                ? 'bg-primary-500 border-primary-500'
-                                                : 'border-gray-300'
+                                            ? 'bg-primary-500 border-primary-500'
+                                            : 'border-gray-300'
                                             }`}
                                     >
                                         <Text
@@ -282,12 +285,12 @@ export default function SearchScreen() {
                         <View className="mb-6">
                             <Text className="text-gray-700 font-medium mb-2">Sort By</Text>
                             <View className="flex-row flex-wrap gap-2">
-                                {[
+                                {([
                                     { label: 'Latest', value: 'createdAt' },
                                     { label: 'Price', value: 'price' },
                                     { label: 'Rating', value: 'rating' },
                                     { label: 'Views', value: 'views' },
-                                ].map((item) => (
+                                ] as { label: string; value: 'createdAt' | 'price' | 'rating' | 'views' }[]).map((item) => (
                                     <TouchableOpacity
                                         key={item.value}
                                         onPress={() =>
@@ -297,8 +300,8 @@ export default function SearchScreen() {
                                             }))
                                         }
                                         className={`px-4 py-2 rounded-full border ${localFilters.sortBy === item.value
-                                                ? 'bg-secondary-500 border-secondary-500'
-                                                : 'border-gray-300'
+                                            ? 'bg-secondary-500 border-secondary-500'
+                                            : 'border-gray-300'
                                             }`}
                                     >
                                         <Text

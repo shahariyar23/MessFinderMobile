@@ -27,7 +27,7 @@ export default function HomeScreen() {
     const dispatch = useAppDispatch();
     const { user } = useAppSelector((state) => state.auth);
     const { messes, isLoading } = useAppSelector((state) => state.mess);
-    const { savedMesses } = useAppSelector((state) => state.favorites);
+    const savedMesses = useAppSelector((state) => state.favorites?.savedMesses ?? []);
 
     const [refreshing, setRefreshing] = useState(false);
     const [sliders, setSliders] = useState<HomeSlider[]>([]);
@@ -84,7 +84,11 @@ export default function HomeScreen() {
     }, []);
 
     const isFavorite = (messId: string) => {
-        return savedMesses?.some((item) => item.mess_id._id === messId) || false;
+        return savedMesses?.some((item) => {
+            // Handle both cases: mess_id could be an object with _id or just a string ID
+            const itemMessId = typeof item.mess_id === 'object' ? item.mess_id?._id : item.mess_id;
+            return itemMessId === messId;
+        }) || false;
     };
 
     const handleFavoriteToggle = async (messId: string) => {

@@ -14,8 +14,26 @@ export const fetchSavedMesses = createAsyncThunk(
     async (_, { rejectWithValue }) => {
         try {
             const response = await messService.getSavedMesses();
-            return response.data;
+            console.log('📋 getSavedMesses API response:', JSON.stringify(response, null, 2));
+
+            // Handle different API response formats
+            let savedMesses = response.data;
+
+            // If response.data is an object with savedMesses property
+            if (savedMesses && !Array.isArray(savedMesses) && (savedMesses as any).savedMesses) {
+                savedMesses = (savedMesses as any).savedMesses;
+            }
+
+            // Ensure we always return an array
+            if (!Array.isArray(savedMesses)) {
+                console.log('⚠️ savedMesses is not an array, returning empty array');
+                return [];
+            }
+
+            console.log('✅ Returning', savedMesses.length, 'saved messes');
+            return savedMesses;
         } catch (error: any) {
+            console.log('❌ fetchSavedMesses error:', error.message);
             return rejectWithValue(error.message || 'Failed to fetch saved messes');
         }
     }
@@ -24,11 +42,15 @@ export const fetchSavedMesses = createAsyncThunk(
 // Save a mess
 export const saveMess = createAsyncThunk(
     'favorites/save',
-    async (messId: string, { rejectWithValue }) => {
+    async (messId: string, { rejectWithValue, dispatch }) => {
         try {
             const response = await messService.saveMess(messId);
+            console.log('💾 saveMess API response:', JSON.stringify(response, null, 2));
+            // Refetch all saved messes to ensure UI is in sync
+            dispatch(fetchSavedMesses());
             return response.data;
         } catch (error: any) {
+            console.log('❌ saveMess error:', error.message);
             return rejectWithValue(error.message || 'Failed to save mess');
         }
     }
@@ -37,11 +59,14 @@ export const saveMess = createAsyncThunk(
 // Remove saved mess
 export const removeSavedMess = createAsyncThunk(
     'favorites/remove',
-    async (messId: string, { rejectWithValue }) => {
+    async (messId: string, { rejectWithValue, dispatch }) => {
         try {
             await messService.removeSavedMess(messId);
+            // Refetch all saved messes to ensure UI is in sync
+            dispatch(fetchSavedMesses());
             return messId;
         } catch (error: any) {
+            console.log('❌ removeSavedMess error:', error.message);
             return rejectWithValue(error.message || 'Failed to remove saved mess');
         }
     }
@@ -69,6 +94,7 @@ const favoriteSlice = createSlice({
             .addCase(fetchSavedMesses.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.payload as string;
+                state.savedMesses = []; // Ensure it's always an array
             });
 
         // Save mess
@@ -92,9 +118,12 @@ const favoriteSlice = createSlice({
             })
             .addCase(removeSavedMess.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.savedMesses = state.savedMesses.filter(
-                    (item) => item.mess_id._id !== action.payload
-                );
+                state.savedMesses = state.savedMesses.filter((item) => {
+                    // Handle both mess_id and mess properties
+                    const messData = (item as any).mess || item.mess_id;
+                    const itemMessId = typeof messData === 'object' ? messData?._id : messData;
+                    return itemMessId !== action.payload;
+                });
             })
             .addCase(removeSavedMess.rejected, (state, action) => {
                 state.isLoading = false;

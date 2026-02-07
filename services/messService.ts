@@ -162,6 +162,14 @@ export const messService = {
         const response = await api.get('/request/get-all-request-user');
         return response.data;
     },
+
+    // Increment mess view count (re-fetch the mess to trigger view increment on backend)
+    async incrementMessView(messId: string): Promise<ApiResponse<any>> {
+        // The backend typically increments view count when mess details are fetched
+        // This is a silent call to ensure the view is counted
+        const response = await api.get(`/mess/get-mess-info/${messId}`);
+        return response.data;
+    },
 };
 
 export default messService;
