@@ -43,10 +43,6 @@ export default function ProfileScreen() {
     const { user, isAuthenticated, isLoading } = useAppSelector((state) => state.auth);
     const { colorScheme, toggleColorScheme } = useColorScheme();
 
-    useEffect(() => {
-        console.log('🎨 Current color scheme:', colorScheme);
-    }, [colorScheme]);
-
     // Edit Profile State
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [editName, setEditName] = useState('');
@@ -210,7 +206,7 @@ export default function ProfileScreen() {
                                 >
                                     <View className="flex-row items-center flex-1">
                                         <View className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-xl items-center justify-center">
-                                            <item.icon size={20} color={Colors.gray[600]} />
+                                            <item.icon size={20} color={colorScheme === 'dark' ? Colors.white : Colors.gray[600]} />
                                         </View>
                                         <Text className="ml-4 text-gray-800 dark:text-white font-medium">{item.label}</Text>
                                     </View>
@@ -256,9 +252,9 @@ export default function ProfileScreen() {
                                     <Text className="text-xl font-bold text-gray-800 dark:text-white">Edit Profile</Text>
                                     <TouchableOpacity
                                         onPress={() => setEditModalVisible(false)}
-                                        className="p-2 bg-gray-100 rounded-full"
+                                        className="p-2 bg-gray-100 dark:bg-gray-800 rounded-full"
                                     >
-                                        <X size={20} color={Colors.gray[600]} />
+                                        <X size={20} color={colorScheme === 'dark' ? Colors.white : Colors.gray[600]} />
                                     </TouchableOpacity>
                                 </View>
 
