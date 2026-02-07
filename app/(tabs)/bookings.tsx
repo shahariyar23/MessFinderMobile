@@ -132,7 +132,7 @@ export default function BookingsScreen() {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-gray-50" edges={['top']}>
+        <SafeAreaView className="flex-1 bg-gray-200" edges={['top']}>
             {/* Header */}
             <View className="bg-white px-5 py-4">
                 <Text className="text-2xl font-bold text-gray-800">My Bookings</Text>

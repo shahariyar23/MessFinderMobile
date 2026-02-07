@@ -3,5 +3,6 @@ export { Input } from './Input';
 export { MessCard } from './MessCard';
 export { Loading } from './Loading';
 export { Rating } from './Rating';
+export * from './Footer';
 export { Badge } from './Badge';
 export { Avatar } from './Avatar';

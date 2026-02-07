@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
     View,
     Text,
@@ -13,7 +13,7 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Search, Bell, MapPin, ChevronRight } from 'lucide-react-native';
 import Toast from 'react-native-toast-message';
-import { MessCard, Loading } from '../../components/ui';
+import { MessCard, Loading, Footer } from '../../components/ui';
 import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
 import { fetchMesses } from '../../store/slices/messSlice';
 import { fetchSavedMesses, saveMess, removeSavedMess } from '../../store/slices/favoriteSlice';
@@ -33,6 +33,7 @@ export default function HomeScreen() {
     const [refreshing, setRefreshing] = useState(false);
     const [sliders, setSliders] = useState<HomeSlider[]>([]);
     const [activeSlide, setActiveSlide] = useState(0);
+    const flatListRef = useRef<FlatList>(null);
 
     useEffect(() => {
         loadData();
@@ -115,6 +116,21 @@ export default function HomeScreen() {
         }
     };
 
+    useEffect(() => {
+        if (sliders.length > 1) {
+            const interval = setInterval(() => {
+                const nextIndex = (activeSlide + 1) % sliders.length;
+                setActiveSlide(nextIndex);
+                flatListRef.current?.scrollToIndex({
+                    index: nextIndex,
+                    animated: true,
+                });
+            }, 3000); // Change slide every 3 seconds
+
+            return () => clearInterval(interval);
+        }
+    }, [activeSlide, sliders.length]);
+
     const getGreeting = () => {
         const hour = new Date().getHours();
 
@@ -125,14 +141,14 @@ export default function HomeScreen() {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-gray-50" edges={['top']}>
+        <SafeAreaView className="flex-1 bg-gray-200" edges={['top']}>
             <ScrollView
                 className="flex-1"
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                 showsVerticalScrollIndicator={false}
             >
                 {/* Header */}
-                <View className="bg-white px-5 pt-4 pb-5">
+                <View className="bg-white px-5 pt-4 pb-5 rounded-3xl mx-3">
                     <View className="flex-row justify-between items-center mb-4">
                         <View>
                             <Text className="text-gray-500 text-sm">{getGreeting()}</Text>
@@ -146,8 +162,9 @@ export default function HomeScreen() {
 
                 {/* Image Slider */}
                 {sliders.length > 0 && (
-                    <View className="mt-4">
+                    <View className="my-4">
                         <FlatList
+                            ref={flatListRef}
                             data={sliders}
                             horizontal
                             pagingEnabled
@@ -167,7 +184,7 @@ export default function HomeScreen() {
                             keyExtractor={(item) => item._id}
                         />
                         {sliders.length > 1 && (
-                            <View className="flex-row justify-center mt-3 gap-1.5">
+                            <View className="flex-row justify-center mx-3 gap-1.5">
                                 {sliders.map((_, index) => (
                                     <View
                                         key={index}
@@ -181,7 +198,7 @@ export default function HomeScreen() {
                 )}
 
                 {/* Quick Stats */}
-                <View className="flex-row px-4 mt-5 gap-3">
+                <View className="flex-row px-4 mx-auto gap-3">
                     <View className="flex-1 bg-primary-50 rounded-2xl p-4">
                         <Text className="text-primary-600 text-2xl font-bold">
                             {messes.filter((m) => m.status === 'free').length}+
@@ -229,8 +246,11 @@ export default function HomeScreen() {
                     )}
                 </View>
 
-                {/* Bottom Padding */}
-                <View className="h-6" />
+                {/* Footer */}
+                <Footer />
+
+                {/* Bottom Padding for Tab Bar */}
+                <View className="h-24" />
             </ScrollView>
         </SafeAreaView>
     );

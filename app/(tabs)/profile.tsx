@@ -94,7 +94,7 @@ export default function ProfileScreen() {
     ];
 
     return (
-        <SafeAreaView className="flex-1 bg-gray-50" edges={['top']}>
+        <SafeAreaView className="flex-1 bg-gray-200" edges={['top']}>
             <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
                 {/* Profile Header */}
                 <View className="bg-white px-6 py-8 items-center">
