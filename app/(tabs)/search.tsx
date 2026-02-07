@@ -17,6 +17,7 @@ import {
     ArrowUpDown,
     MapPin,
 } from 'lucide-react-native';
+import Toast from 'react-native-toast-message';
 import { MessCard, Loading, Button } from '../../components/ui';
 import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
 import { searchMesses, fetchMesses, setFilters } from '../../store/slices/messSlice';
@@ -27,6 +28,7 @@ export default function SearchScreen() {
     const router = useRouter();
     const dispatch = useAppDispatch();
     const { messes, isLoading, pagination, filters } = useAppSelector((state) => state.mess);
+    const { user } = useAppSelector((state) => state.auth);
     const savedMesses = useAppSelector((state) => state.favorites?.savedMesses ?? []);
 
     const [searchQuery, setSearchQuery] = useState('');
@@ -89,16 +91,32 @@ export default function SearchScreen() {
 
     const isFavorite = (messId: string) => {
         return savedMesses?.some((item) => {
-            const itemMessId = typeof item.mess_id === 'object' ? item.mess_id?._id : item.mess_id;
+            // Handle both cases: mess_id could be an object with _id or just a string ID
+            // Also handle the case where the API returns `mess` instead of `mess_id`
+            const messData = (item as any).mess || item.mess_id;
+            const itemMessId = typeof messData === 'object' ? messData?._id : messData;
             return itemMessId === messId;
         }) || false;
     };
 
     const handleFavoriteToggle = (messId: string) => {
+        const mess = messes.find((m) => m._id === messId);
+        const messName = mess?.title || 'Mess';
+
         if (isFavorite(messId)) {
             dispatch(removeSavedMess(messId));
+            Toast.show({
+                type: 'info',
+                text1: 'Running...',
+                text2: `${messName} removed from favorites`,
+            });
         } else {
             dispatch(saveMess(messId));
+            Toast.show({
+                type: 'success',
+                text1: 'Success',
+                text2: `${messName} added to favorites`,
+            });
         }
     };
 
@@ -178,7 +196,7 @@ export default function SearchScreen() {
                     <MessCard
                         mess={item}
                         onPress={() => router.push(`/mess/${item._id}`)}
-                        onFavoritePress={() => handleFavoriteToggle(item._id)}
+                        onFavoritePress={user ? () => handleFavoriteToggle(item._id) : undefined}
                         isFavorite={isFavorite(item._id)}
                     />
                 )}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
     View,
     Text,
@@ -50,6 +50,8 @@ export default function MessDetailScreen() {
     const [loadError, setLoadError] = useState<string | null>(null);
     const [viewCount, setViewCount] = useState(0);
 
+    const hasFetchedRef = useRef(false);
+
     useEffect(() => {
         // Wait for auth check to complete
         if (authLoading) return;
@@ -61,7 +63,8 @@ export default function MessDetailScreen() {
             return;
         }
 
-        if (id) {
+        if (id && !hasFetchedRef.current) {
+            hasFetchedRef.current = true;
             console.log('🔍 Fetching mess details for ID:', id);
             setLoadError(null);
             dispatch(fetchMessById(id))

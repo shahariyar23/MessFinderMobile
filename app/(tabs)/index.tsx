@@ -12,6 +12,7 @@ import {
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Search, Bell, MapPin, ChevronRight } from 'lucide-react-native';
+import Toast from 'react-native-toast-message';
 import { MessCard, Loading } from '../../components/ui';
 import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
 import { fetchMesses } from '../../store/slices/messSlice';
@@ -86,16 +87,31 @@ export default function HomeScreen() {
     const isFavorite = (messId: string) => {
         return savedMesses?.some((item) => {
             // Handle both cases: mess_id could be an object with _id or just a string ID
-            const itemMessId = typeof item.mess_id === 'object' ? item.mess_id?._id : item.mess_id;
+            // Also handle the case where the API returns `mess` instead of `mess_id`
+            const messData = (item as any).mess || item.mess_id;
+            const itemMessId = typeof messData === 'object' ? messData?._id : messData;
             return itemMessId === messId;
         }) || false;
     };
 
     const handleFavoriteToggle = async (messId: string) => {
+        const mess = messes.find((m) => m._id === messId);
+        const messName = mess?.title || 'Mess';
+
         if (isFavorite(messId)) {
             dispatch(removeSavedMess(messId));
+            Toast.show({
+                type: 'info',
+                text1: 'Running...',
+                text2: `${messName} removed from favorites`,
+            });
         } else {
             dispatch(saveMess(messId));
+            Toast.show({
+                type: 'success',
+                text1: 'Success',
+                text2: `${messName} added to favorites`,
+            });
         }
     };
 
@@ -213,7 +229,7 @@ export default function HomeScreen() {
                                 key={mess._id}
                                 mess={mess}
                                 onPress={() => router.push(`/mess/${mess._id}`)}
-                                onFavoritePress={() => handleFavoriteToggle(mess._id)}
+                                onFavoritePress={user ? () => handleFavoriteToggle(mess._id) : undefined}
                                 isFavorite={isFavorite(mess._id)}
                             />
                         ))
