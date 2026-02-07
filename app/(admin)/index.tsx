@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, RefreshControl, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import {
@@ -10,11 +10,13 @@ import {
     TrendingUp,
     AlertCircle,
     CheckCircle,
-    Clock
+    Clock,
+    LogOut
 } from 'lucide-react-native';
 import { Colors } from '../../constants';
 import { Loading } from '../../components/ui';
-import { useAppSelector } from '../../hooks/useRedux';
+import { useAppSelector, useAppDispatch } from '../../hooks/useRedux';
+import { logout } from '../../store/slices/authSlice';
 
 interface StatCard {
     title: string;
@@ -26,6 +28,7 @@ interface StatCard {
 
 export default function AdminDashboard() {
     const router = useRouter();
+    const dispatch = useAppDispatch();
     const { user } = useAppSelector((state) => state.auth);
     const [refreshing, setRefreshing] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -39,6 +42,24 @@ export default function AdminDashboard() {
         activeBookings: 0,
         completedBookings: 0,
     });
+
+    const handleLogout = () => {
+        Alert.alert(
+            'Logout',
+            'Are you sure you want to logout?',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: 'Logout',
+                    style: 'destructive',
+                    onPress: () => {
+                        dispatch(logout());
+                        router.replace('/(auth)/login');
+                    },
+                },
+            ]
+        );
+    };
 
     useEffect(() => {
         loadDashboardStats();
@@ -129,9 +150,17 @@ export default function AdminDashboard() {
                 showsVerticalScrollIndicator={false}
             >
                 {/* Welcome Header */}
-                <View className="bg-white px-5 py-6 shadow-sm">
-                    <Text className="text-2xl font-bold text-gray-800">Welcome back, Admin</Text>
-                    <Text className="text-gray-500 mt-1">{user?.name}</Text>
+                <View className="bg-white px-5 py-6 shadow-sm flex-row justify-between items-center">
+                    <View>
+                        <Text className="text-2xl font-bold text-gray-800">Welcome back, Admin</Text>
+                        <Text className="text-gray-500 mt-1">{user?.name}</Text>
+                    </View>
+                    <TouchableOpacity
+                        onPress={handleLogout}
+                        className="w-11 h-11 bg-red-50 rounded-full items-center justify-center"
+                    >
+                        <LogOut size={22} color={Colors.error} />
+                    </TouchableOpacity>
                 </View>
 
                 {/* Quick Stats */}

@@ -24,7 +24,11 @@ export const authService = {
 
     // Verify OTP - Step 2: Complete login
     async verifyLogin(data: OTPVerifyData): Promise<ApiResponse<{ user: User; token?: string }>> {
+        console.log('🔐 verifyLogin called with:', data.email);
         const response = await api.post('/user/verify-login', data);
+
+        console.log('📦 verifyLogin response:', JSON.stringify(response.data, null, 2));
+        console.log('📦 Response headers:', JSON.stringify(response.headers, null, 2));
 
         // For mobile, we expect token in response body
         // If using cookies, we'll need to extract from headers
@@ -32,8 +36,17 @@ export const authService = {
             response.headers['x-auth-token'] ||
             response.headers['authorization']?.replace('Bearer ', '');
 
+        console.log('🔑 Token found:', token ? `${token.substring(0, 20)}...` : 'NO TOKEN FOUND!');
+
         if (token) {
             await AsyncStorage.setItem(StorageKeys.AUTH_TOKEN, token);
+            console.log('✅ Token saved to AsyncStorage');
+
+            // Verify it was saved
+            const savedToken = await AsyncStorage.getItem(StorageKeys.AUTH_TOKEN);
+            console.log('🔍 Token verification - saved correctly:', !!savedToken);
+        } else {
+            console.log('⚠️ WARNING: No token received from server!');
         }
 
         if (response.data.data?.user) {
@@ -41,6 +54,7 @@ export const authService = {
                 StorageKeys.USER_DATA,
                 JSON.stringify(response.data.data.user)
             );
+            console.log('✅ User data saved to AsyncStorage');
         }
 
         return response.data;

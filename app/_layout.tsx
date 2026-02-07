@@ -29,6 +29,7 @@ function RootLayoutNav() {
         // Define protected routes that require authentication
         const protectedRoutes = [
             '(admin)',
+            'mess/', // mess details
             'booking/create',
             'booking/', // booking details
             'payment',

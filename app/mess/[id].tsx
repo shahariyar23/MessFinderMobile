@@ -42,17 +42,39 @@ export default function MessDetailScreen() {
     const dispatch = useAppDispatch();
     const { currentMess, isLoading } = useAppSelector((state) => state.mess);
     const { savedMesses } = useAppSelector((state) => state.favorites);
+    const { isAuthenticated, isLoading: authLoading } = useAppSelector((state) => state.auth);
 
     const [activeImageIndex, setActiveImageIndex] = useState(0);
     const [reviews, setReviews] = useState<Review[]>([]);
     const [isSaved, setIsSaved] = useState(false);
+    const [loadError, setLoadError] = useState<string | null>(null);
 
     useEffect(() => {
+        // Wait for auth check to complete
+        if (authLoading) return;
+
+        // Check authentication before making API calls
+        if (!isAuthenticated) {
+            console.log('🔒 User not authenticated, redirecting to login...');
+            // The redirect is handled by _layout.tsx, but we don't make API calls
+            return;
+        }
+
         if (id) {
-            dispatch(fetchMessById(id));
+            console.log('🔍 Fetching mess details for ID:', id);
+            setLoadError(null);
+            dispatch(fetchMessById(id))
+                .unwrap()
+                .then((data) => {
+                    console.log('✅ Mess details loaded successfully:', data?.title);
+                })
+                .catch((error) => {
+                    console.error('❌ Failed to load mess details:', error);
+                    setLoadError(error || 'Failed to load mess details');
+                });
             loadReviews();
         }
-    }, [id]);
+    }, [id, isAuthenticated, authLoading]);
 
     useEffect(() => {
         setIsSaved(savedMesses.some((item) => item.mess_id._id === id));
@@ -60,12 +82,14 @@ export default function MessDetailScreen() {
 
     const loadReviews = async () => {
         try {
+            console.log('🔍 Fetching reviews for mess:', id);
             const response = await messService.getMessReviews(id!);
             if (response.success) {
+                console.log('✅ Reviews loaded:', response.data?.length || 0);
                 setReviews(response.data);
             }
         } catch (err) {
-            console.log('Failed to load reviews');
+            console.log('❌ Failed to load reviews:', err);
         }
     };
 
@@ -99,6 +123,40 @@ export default function MessDetailScreen() {
             params: { messId: id },
         });
     };
+
+    // Wait for auth check to complete
+    if (authLoading) {
+        return <Loading fullScreen text="Checking authentication..." />;
+    }
+
+    // If not authenticated, show loading while redirect happens
+    if (!isAuthenticated) {
+        return <Loading fullScreen text="Redirecting to login..." />;
+    }
+
+    if (loadError) {
+        return (
+            <SafeAreaView className="flex-1 bg-white items-center justify-center px-6">
+                <Text className="text-xl font-bold text-gray-800 mb-2">Failed to Load</Text>
+                <Text className="text-gray-500 text-center mb-6">{loadError}</Text>
+                <TouchableOpacity
+                    onPress={() => {
+                        setLoadError(null);
+                        dispatch(fetchMessById(id!));
+                    }}
+                    className="bg-primary-500 px-6 py-3 rounded-xl"
+                >
+                    <Text className="text-white font-semibold">Retry</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => router.back()}
+                    className="mt-4"
+                >
+                    <Text className="text-gray-500">Go Back</Text>
+                </TouchableOpacity>
+            </SafeAreaView>
+        );
+    }
 
     if (isLoading || !currentMess) {
         return <Loading fullScreen text="Loading mess details..." />;

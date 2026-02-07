@@ -41,17 +41,39 @@ export default function HomeScreen() {
         dispatch(fetchMesses({ page: 1, limit: 10 }));
         dispatch(fetchSavedMesses());
         try {
-            console.log('Fetching home sliders...');
+            console.log('========================================');
+            console.log('🔍 Fetching home sliders...');
+            console.log('API Endpoint: /admin/get-home-page-slider');
+
             const response = await messService.getHomeSliders();
-            console.log('Slider API response:', JSON.stringify(response, null, 2));
+
+            console.log('📦 Full API Response:', JSON.stringify(response, null, 2));
+            console.log('✅ Response Success:', response.success);
+            console.log('📊 Response Data Type:', typeof response.data);
+            console.log('📊 Is Array?:', Array.isArray(response.data));
+
             if (response.success) {
-                console.log('Sliders data:', response.data);
+                console.log('✅ SUCCESS: Slider API returned success=true');
+                console.log('📋 Data received:', response.data);
+                console.log('📋 Number of sliders:', response.data?.length || 0);
+
+                if (response.data && response.data.length > 0) {
+                    console.log('🎯 First slider structure:', JSON.stringify(response.data[0], null, 2));
+                    console.log('🖼️ First slider has backgroundImage?:', !!response.data[0]?.backgroundImage);
+                    console.log('🖼️ backgroundImage URL:', response.data[0]?.backgroundImage?.url);
+                }
+
                 setSliders(response.data);
             } else {
-                console.log('Slider API returned success=false');
+                console.log('❌ ERROR: Slider API returned success=false');
+                console.log('❌ Message:', response.message);
             }
+            console.log('========================================');
         } catch (err) {
-            console.error('Failed to load sliders:', err);
+            console.log('========================================');
+            console.error('💥 CATCH ERROR: Failed to load sliders');
+            console.error('Error details:', JSON.stringify(err, null, 2));
+            console.log('========================================');
         }
     };
 
@@ -62,7 +84,7 @@ export default function HomeScreen() {
     }, []);
 
     const isFavorite = (messId: string) => {
-        return savedMesses.some((item) => item.mess_id._id === messId);
+        return savedMesses?.some((item) => item.mess_id._id === messId) || false;
     };
 
     const handleFavoriteToggle = async (messId: string) => {
@@ -123,7 +145,7 @@ export default function HomeScreen() {
                             }}
                             renderItem={({ item }) => (
                                 <Image
-                                    source={{ uri: item.image?.url || 'https://via.placeholder.com/400x160' }}
+                                    source={{ uri: item.backgroundImage?.url || 'https://via.placeholder.com/400x160' }}
                                     style={{ width: width - 32, height: 160, marginHorizontal: 16 }}
                                     className="rounded-2xl"
                                     resizeMode="cover"
