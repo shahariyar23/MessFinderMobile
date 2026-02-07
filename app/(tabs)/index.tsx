@@ -102,7 +102,7 @@ export default function HomeScreen() {
             dispatch(removeSavedMess(messId));
             Toast.show({
                 type: 'info',
-                text1: 'Running...',
+                text1: 'Removing...',
                 text2: `${messName} removed from favorites`,
             });
         } else {
@@ -117,9 +117,11 @@ export default function HomeScreen() {
 
     const getGreeting = () => {
         const hour = new Date().getHours();
-        if (hour < 12) return 'Good Morning';
-        if (hour < 18) return 'Good Afternoon';
-        return 'Good Evening';
+
+        if (hour >= 5 && hour < 12) return 'Good Morning';
+        if (hour >= 12 && hour < 18) return 'Good Afternoon';
+        if (hour >= 18 && hour < 21) return 'Good Evening';
+        return 'Good Night'; // 9 PM – 4:59 AM
     };
 
     return (
