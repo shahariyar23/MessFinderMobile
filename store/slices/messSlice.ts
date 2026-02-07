@@ -86,7 +86,14 @@ const messSlice = createSlice({
             })
             .addCase(fetchMesses.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.messes = action.payload.messes || [];
+                if (action.meta.arg.page && action.meta.arg.page > 1) {
+                    const newMesses = action.payload.messes || [];
+                    const existingIds = new Set(state.messes.map((m) => m._id));
+                    const uniqueNewMesses = newMesses.filter((m: Mess) => !existingIds.has(m._id));
+                    state.messes = [...state.messes, ...uniqueNewMesses];
+                } else {
+                    state.messes = action.payload.messes || [];
+                }
                 state.pagination = action.payload.pagination || null;
             })
             .addCase(fetchMesses.rejected, (state, action) => {
@@ -103,6 +110,11 @@ const messSlice = createSlice({
             .addCase(fetchMessById.fulfilled, (state, action) => {
                 state.isLoading = false;
                 state.currentMess = action.payload;
+                // Also update the mess in the list if it exists
+                const index = state.messes.findIndex((m) => m._id === action.payload._id);
+                if (index !== -1) {
+                    state.messes[index] = action.payload;
+                }
             })
             .addCase(fetchMessById.rejected, (state, action) => {
                 state.isLoading = false;
@@ -117,7 +129,14 @@ const messSlice = createSlice({
             })
             .addCase(searchMesses.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.messes = action.payload.messes || [];
+                if (action.meta.arg.page && action.meta.arg.page > 1) {
+                    const newMesses = action.payload.messes || [];
+                    const existingIds = new Set(state.messes.map((m) => m._id));
+                    const uniqueNewMesses = newMesses.filter((m: Mess) => !existingIds.has(m._id));
+                    state.messes = [...state.messes, ...uniqueNewMesses];
+                } else {
+                    state.messes = action.payload.messes || [];
+                }
                 state.pagination = action.payload.pagination || null;
             })
             .addCase(searchMesses.rejected, (state, action) => {

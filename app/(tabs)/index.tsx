@@ -136,21 +136,12 @@ export default function HomeScreen() {
                     <View className="flex-row justify-between items-center mb-4">
                         <View>
                             <Text className="text-gray-500 text-sm">{getGreeting()}</Text>
-                            <Text className="text-gray-800 text-xl font-bold">{user?.name || 'Guest'}</Text>
+                            <Text className="text-green-500 text-xl font-bold">{user?.name || 'Guest'}</Text>
                         </View>
-                        <TouchableOpacity className="w-11 h-11 bg-gray-100 rounded-full items-center justify-center">
-                            <Bell size={22} color={Colors.gray[700]} />
+                        <TouchableOpacity className="w-11 h-11 bg-green-100 rounded-full items-center justify-center">
+                            <Bell size={22} color={Colors.primary[500]} />
                         </TouchableOpacity>
                     </View>
-
-                    {/* Search Bar */}
-                    <TouchableOpacity
-                        onPress={() => router.push('/(tabs)/search')}
-                        className="flex-row items-center bg-gray-100 rounded-xl px-4 py-3.5"
-                    >
-                        <Search size={20} color={Colors.gray[400]} />
-                        <Text className="ml-3 text-gray-400 flex-1">Search for mess, location...</Text>
-                    </TouchableOpacity>
                 </View>
 
                 {/* Image Slider */}

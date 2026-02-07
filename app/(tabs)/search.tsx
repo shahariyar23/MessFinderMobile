@@ -130,7 +130,7 @@ export default function SearchScreen() {
         <SafeAreaView className="flex-1 bg-gray-50" edges={['top']}>
             {/* Search Header */}
             <View className="bg-white px-4 pt-4 pb-4 shadow-sm">
-                <View className="flex-row items-center gap-3">
+                <View className="flex-row items-center gap-3 mb-2">
                     <View className="flex-1 flex-row items-center bg-gray-100 rounded-xl px-4 py-3">
                         <Search size={20} color={Colors.gray[400]} />
                         <TextInput
@@ -150,7 +150,7 @@ export default function SearchScreen() {
                     </View>
                     <TouchableOpacity
                         onPress={() => setShowFilters(true)}
-                        className="w-12 h-12 bg-primary-500 rounded-xl items-center justify-center"
+                        className="w-11 h-11 bg-primary-500 rounded-xl items-center justify-center"
                     >
                         <SlidersHorizontal size={20} color="#fff" />
                     </TouchableOpacity>
@@ -283,13 +283,13 @@ export default function SearchScreen() {
                                             }))
                                         }
                                         className={`flex-1 py-3 rounded-xl border items-center ${localFilters.genderPreference === pref
-                                            ? 'bg-primary-500 border-primary-500'
-                                            : 'border-gray-300'
+                                            ? 'bg-primary-500 border-primary-500 rounded-xl'
+                                            : 'border-gray-300 rounded-xl'
                                             }`}
                                     >
                                         <Text
                                             className={
-                                                localFilters.genderPreference === pref ? 'text-white font-medium' : 'text-gray-600'
+                                                localFilters.genderPreference === pref ? 'text-white font-medium rounded-xl' : 'text-gray-600 rounded-xl'
                                             }
                                         >
                                             {pref}
@@ -335,17 +335,17 @@ export default function SearchScreen() {
                         </View>
 
                         {/* Actions */}
-                        <View className="flex-row gap-3">
+                        <View className="flex-row gap-2 ">
                             <Button
                                 title="Clear"
                                 onPress={clearFilters}
                                 variant="outline"
-                                className="flex-1"
+                                className="flex-1 mr-2"
                             />
                             <Button
                                 title="Apply Filters"
                                 onPress={applyFilters}
-                                className="flex-1"
+                                className="flex-1 ml-2"
                             />
                         </View>
                     </View>

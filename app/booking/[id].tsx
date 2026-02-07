@@ -105,14 +105,16 @@ export default function BookingDetailScreen() {
     const canCancel =
         currentBooking.bookingStatus === 'pending' &&
         currentBooking.paymentStatus !== 'paid';
-
     return (
         <>
             <Stack.Screen
                 options={{
                     headerTitle: 'Booking Details',
                     headerLeft: () => (
-                        <TouchableOpacity onPress={() => router.back()}>
+                        <TouchableOpacity
+                            onPress={() => router.back()}
+                            className="w-10 h-10 rounded-full items-center justify-center"
+                        >
                             <ChevronLeft size={24} color={Colors.gray[800]} />
                         </TouchableOpacity>
                     ),

@@ -29,7 +29,7 @@ import Toast from 'react-native-toast-message';
 import { Button, Loading, Rating, Badge, Avatar } from '../../components/ui';
 import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
 import { fetchMessById } from '../../store/slices/messSlice';
-import { saveMess, removeSavedMess } from '../../store/slices/favoriteSlice';
+import { saveMess, removeSavedMess, fetchSavedMesses } from '../../store/slices/favoriteSlice';
 import messService from '../../services/messService';
 import { Colors, FacilityIcons } from '../../constants';
 import { Review } from '../../types';
@@ -71,12 +71,10 @@ export default function MessDetailScreen() {
                 .unwrap()
                 .then((data) => {
                     console.log('✅ Mess details loaded successfully:', data?.title);
-                    // Set initial view count and increment it
+                    // Set initial view count
                     if (data?.view !== undefined) {
-                        setViewCount(data.view + 1);
+                        setViewCount(data.view);
                     }
-                    // Increment view count on the server
-                    messService.incrementMessView(id).catch(console.log);
                 })
                 .catch((error) => {
                     console.error('❌ Failed to load mess details:', error);
@@ -87,11 +85,23 @@ export default function MessDetailScreen() {
     }, [id, isAuthenticated, authLoading]);
 
     useEffect(() => {
-        setIsSaved(savedMesses?.some((item) => {
-            const itemMessId = typeof item.mess_id === 'object' ? item.mess_id?._id : item.mess_id;
+        // Handle both cases: mess_id could be an object with _id or just a string ID
+        // Also handle the case where the API returns `mess` instead of `mess_id`
+        const checkIsSaved = savedMesses?.some((item) => {
+            const messData = (item as any).mess || item.mess_id;
+            const itemMessId = typeof messData === 'object' ? messData?._id : messData;
             return itemMessId === id;
-        }) || false);
+        }) || false;
+
+        setIsSaved(checkIsSaved);
     }, [savedMesses, id]);
+
+    // Ensure saved messes are loaded if they haven't been
+    useEffect(() => {
+        if (isAuthenticated && (!savedMesses || savedMesses.length === 0)) {
+            dispatch(fetchSavedMesses());
+        }
+    }, [isAuthenticated, dispatch]);
 
     const loadReviews = async () => {
         try {
@@ -107,12 +117,21 @@ export default function MessDetailScreen() {
     };
 
     const handleFavoriteToggle = () => {
+        const messName = currentMess?.title || 'Mess';
         if (isSaved) {
             dispatch(removeSavedMess(id!));
-            Toast.show({ type: 'info', text1: 'Removed from favorites' });
+            Toast.show({
+                type: 'info',
+                text1: 'Running...',
+                text2: `${messName} removed from favorites`,
+            });
         } else {
             dispatch(saveMess(id!));
-            Toast.show({ type: 'success', text1: 'Added to favorites' });
+            Toast.show({
+                type: 'success',
+                text1: 'Success',
+                text2: `${messName} added to favorites`,
+            });
         }
     };
 

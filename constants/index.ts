@@ -1,5 +1,5 @@
 // API Configuration
-export const API_BASE_URL = 'http://192.168.0.103:8000/api/v1';
+export const API_BASE_URL = 'http://192.168.0.109:8000/api/v1';
 
 // App Colors
 export const Colors = {
@@ -79,7 +79,7 @@ export const FacilityIcons: Record<string, string> = {
 };
 
 // Room Types
-export const RoomTypes = ['Single', 'Shared', 'Double', 'Triple', 'Dormitory'];
+export const RoomTypes = ['Single', 'Shared', 'Double'];
 
 // Gender Preferences
 export const GenderPreferences = ['Male', 'Female', 'Any'];
