@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     View,
     Text,
@@ -30,7 +30,19 @@ import { Colors } from '../../constants';
 export default function ProfileScreen() {
     const router = useRouter();
     const dispatch = useAppDispatch();
-    const { user } = useAppSelector((state) => state.auth);
+    const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+
+    // Redirect to login if not authenticated
+    useEffect(() => {
+        if (!isAuthenticated) {
+            router.replace('/(auth)/login');
+        }
+    }, [isAuthenticated, router]);
+
+    // Show nothing while redirecting (prevents flash of profile content)
+    if (!isAuthenticated) {
+        return null;
+    }
 
     const handleLogout = () => {
         Alert.alert(

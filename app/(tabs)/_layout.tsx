@@ -1,9 +1,12 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
-import { Home, Search, Heart, Calendar, User } from 'lucide-react-native';
+import { Home, Search, Heart, Calendar, User, LogIn } from 'lucide-react-native';
 import { Colors } from '../../constants';
+import { useAppSelector } from '../../hooks/useRedux';
 
 export default function TabLayout() {
+    const { isAuthenticated } = useAppSelector((state) => state.auth);
+
     return (
         <Tabs
             screenOptions={{
@@ -44,6 +47,7 @@ export default function TabLayout() {
                 options={{
                     title: 'Favorites',
                     tabBarIcon: ({ color, size }) => <Heart size={size} color={color} />,
+                    href: isAuthenticated ? undefined : null, // Hide when not authenticated
                 }}
             />
             <Tabs.Screen
@@ -51,13 +55,17 @@ export default function TabLayout() {
                 options={{
                     title: 'Bookings',
                     tabBarIcon: ({ color, size }) => <Calendar size={size} color={color} />,
+                    href: isAuthenticated ? undefined : null, // Hide when not authenticated
                 }}
             />
             <Tabs.Screen
                 name="profile"
                 options={{
-                    title: 'Profile',
-                    tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
+                    title: isAuthenticated ? 'Profile' : 'Login',
+                    tabBarIcon: ({ color, size }) =>
+                        isAuthenticated
+                            ? <User size={size} color={color} />
+                            : <LogIn size={size} color={color} />,
                 }}
             />
             <Tabs.Screen

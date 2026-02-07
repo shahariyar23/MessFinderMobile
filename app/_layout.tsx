@@ -26,11 +26,24 @@ function RootLayoutNav() {
         const inAuthGroup = segments[0] === '(auth)';
         const inAdminGroup = segments[0] === '(admin)';
 
-        // Not authenticated - redirect to login and save current path
-        if (!isAuthenticated && !inAuthGroup) {
+        // Define protected routes that require authentication
+        const protectedRoutes = [
+            '(admin)',
+            'booking/create',
+            'booking/', // booking details
+            'payment',
+        ];
+
+        // Check if current route is protected
+        const currentPath = segments.join('/');
+        const isProtectedRoute = protectedRoutes.some(route =>
+            currentPath.startsWith(route)
+        );
+
+        // Not authenticated and trying to access protected route - redirect to login
+        if (!isAuthenticated && !inAuthGroup && isProtectedRoute) {
             // Save the current path they were trying to access
-            const currentPath = segments.join('/');
-            if (currentPath && currentPath !== '(tabs)') {
+            if (currentPath) {
                 dispatch(setRedirectPath(`/${currentPath}`));
             }
             router.replace('/(auth)/login');

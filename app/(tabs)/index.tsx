@@ -41,12 +41,17 @@ export default function HomeScreen() {
         dispatch(fetchMesses({ page: 1, limit: 10 }));
         dispatch(fetchSavedMesses());
         try {
+            console.log('Fetching home sliders...');
             const response = await messService.getHomeSliders();
+            console.log('Slider API response:', JSON.stringify(response, null, 2));
             if (response.success) {
+                console.log('Sliders data:', response.data);
                 setSliders(response.data);
+            } else {
+                console.log('Slider API returned success=false');
             }
         } catch (err) {
-            console.log('Failed to load sliders');
+            console.error('Failed to load sliders:', err);
         }
     };
 
