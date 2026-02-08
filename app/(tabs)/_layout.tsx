@@ -119,7 +119,36 @@ export default function TabLayout() {
                 name="favorites"
                 options={{
                     title: 'Favorites',
-                    tabBarIcon: ({ color, size }) => <Heart size={24} color={color} />,
+                    tabBarIcon: ({ color, size, focused }) => (
+                        focused ? (
+                            <View
+                                style={{
+                                    width: 60,
+                                    height: 60,
+                                    borderRadius: 30,
+                                    backgroundColor: Colors.primary[500],
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    position: 'absolute',
+                                    top: -30,
+                                    shadowColor: Colors.primary[500],
+                                    shadowOffset: { width: 0, height: 10 },
+                                    shadowOpacity: 0.4,
+                                    shadowRadius: 10,
+                                    elevation: 10,
+                                    borderWidth: 4,
+                                    borderColor: isDark ? '#111827' : '#f9fafb',
+                                }}
+                            >
+                                <Heart size={28} color="#fff" />
+                            </View>
+                        ) : (
+                            <Heart size={24} color={color} />
+                        )
+                    ),
+                    tabBarLabel: ({ focused, color }) => (
+                        focused ? null : <Text style={{ color, fontSize: 11, fontWeight: '600', marginTop: 2 }}>Favorites</Text>
+                    ),
                     href: isAuthenticated ? undefined : null,
                 }}
             />
@@ -127,7 +156,36 @@ export default function TabLayout() {
                 name="bookings"
                 options={{
                     title: 'Bookings',
-                    tabBarIcon: ({ color, size }) => <Calendar size={24} color={color} />,
+                    tabBarIcon: ({ color, size, focused }) => (
+                        focused ? (
+                            <View
+                                style={{
+                                    width: 60,
+                                    height: 60,
+                                    borderRadius: 30,
+                                    backgroundColor: Colors.primary[500],
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    position: 'absolute',
+                                    top: -30,
+                                    shadowColor: Colors.primary[500],
+                                    shadowOffset: { width: 0, height: 10 },
+                                    shadowOpacity: 0.4,
+                                    shadowRadius: 10,
+                                    elevation: 10,
+                                    borderWidth: 4,
+                                    borderColor: isDark ? '#111827' : '#f9fafb',
+                                }}
+                            >
+                                <Calendar size={28} color="#fff" />
+                            </View>
+                        ) : (
+                            <Calendar size={24} color={color} />
+                        )
+                    ),
+                    tabBarLabel: ({ focused, color }) => (
+                        focused ? null : <Text style={{ color, fontSize: 11, fontWeight: '600', marginTop: 2 }}>Bookings</Text>
+                    ),
                     href: isAuthenticated ? undefined : null,
                 }}
             />
@@ -135,10 +193,36 @@ export default function TabLayout() {
                 name="profile"
                 options={{
                     title: isAuthenticated ? 'Profile' : 'Login',
-                    tabBarIcon: ({ color, size }) =>
-                        isAuthenticated
-                            ? <User size={24} color={color} />
-                            : <LogIn size={24} color={color} />,
+                    tabBarIcon: ({ color, size, focused }) => (
+                        focused ? (
+                            <View
+                                style={{
+                                    width: 60,
+                                    height: 60,
+                                    borderRadius: 30,
+                                    backgroundColor: Colors.primary[500],
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    position: 'absolute',
+                                    top: -30,
+                                    shadowColor: Colors.primary[500],
+                                    shadowOffset: { width: 0, height: 10 },
+                                    shadowOpacity: 0.4,
+                                    shadowRadius: 10,
+                                    elevation: 10,
+                                    borderWidth: 4,
+                                    borderColor: isDark ? '#111827' : '#f9fafb',
+                                }}
+                            >
+                                {isAuthenticated ? <User size={28} color="#fff" /> : <LogIn size={28} color="#fff" />}
+                            </View>
+                        ) : (
+                            isAuthenticated ? <User size={24} color={color} /> : <LogIn size={24} color={color} />
+                        )
+                    ),
+                    tabBarLabel: ({ focused, color }) => (
+                        focused ? null : <Text style={{ color, fontSize: 11, fontWeight: '600', marginTop: 2 }}>{isAuthenticated ? 'Profile' : 'Login'}</Text>
+                    ),
                 }}
             />
             <Tabs.Screen
