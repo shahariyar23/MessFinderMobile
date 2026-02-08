@@ -12,10 +12,11 @@ import {
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Search, Bell, MapPin, ChevronRight } from 'lucide-react-native';
+import { useColorScheme } from 'nativewind';
 import Toast from 'react-native-toast-message';
 import { MessCard, Loading, Footer } from '../../components/ui';
 import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
-import { fetchMesses } from '../../store/slices/messSlice';
+import { fetchMesses, fetchHomeSliders } from '../../store/slices/messSlice';
 import { fetchSavedMesses, saveMess, removeSavedMess } from '../../store/slices/favoriteSlice';
 import messService from '../../services/messService';
 import { Colors } from '../../constants';
@@ -27,11 +28,11 @@ export default function HomeScreen() {
     const router = useRouter();
     const dispatch = useAppDispatch();
     const { user } = useAppSelector((state) => state.auth);
-    const { messes, isLoading } = useAppSelector((state) => state.mess);
+    const { messes, homeSliders: sliders, isLoading } = useAppSelector((state) => state.mess);
     const savedMesses = useAppSelector((state) => state.favorites?.savedMesses ?? []);
+    const { colorScheme } = useColorScheme();
 
     const [refreshing, setRefreshing] = useState(false);
-    const [sliders, setSliders] = useState<HomeSlider[]>([]);
     const [activeSlide, setActiveSlide] = useState(0);
     const flatListRef = useRef<FlatList>(null);
 
@@ -40,43 +41,9 @@ export default function HomeScreen() {
     }, []);
 
     const loadData = async () => {
-        dispatch(fetchMesses({ page: 1, limit: 10 }));
+        dispatch(fetchMesses({ page: 1, limit: 3 }));
         dispatch(fetchSavedMesses());
-        try {
-            console.log('========================================');
-            console.log('🔍 Fetching home sliders...');
-            console.log('API Endpoint: /admin/get-home-page-slider');
-
-            const response = await messService.getHomeSliders();
-
-            console.log('📦 Full API Response:', JSON.stringify(response, null, 2));
-            console.log('✅ Response Success:', response.success);
-            console.log('📊 Response Data Type:', typeof response.data);
-            console.log('📊 Is Array?:', Array.isArray(response.data));
-
-            if (response.success) {
-                console.log('✅ SUCCESS: Slider API returned success=true');
-                console.log('📋 Data received:', response.data);
-                console.log('📋 Number of sliders:', response.data?.length || 0);
-
-                if (response.data && response.data.length > 0) {
-                    console.log('🎯 First slider structure:', JSON.stringify(response.data[0], null, 2));
-                    console.log('🖼️ First slider has backgroundImage?:', !!response.data[0]?.backgroundImage);
-                    console.log('🖼️ backgroundImage URL:', response.data[0]?.backgroundImage?.url);
-                }
-
-                setSliders(response.data);
-            } else {
-                console.log('❌ ERROR: Slider API returned success=false');
-                console.log('❌ Message:', response.message);
-            }
-            console.log('========================================');
-        } catch (err) {
-            console.log('========================================');
-            console.error('💥 CATCH ERROR: Failed to load sliders');
-            console.error('Error details:', JSON.stringify(err, null, 2));
-            console.log('========================================');
-        }
+        dispatch(fetchHomeSliders());
     };
 
     const onRefresh = useCallback(async () => {
@@ -141,20 +108,27 @@ export default function HomeScreen() {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-gray-200 dark:bg-black" edges={['top']}>
+        <SafeAreaView
+            style={{
+                flex: 1,
+                backgroundColor: colorScheme === 'dark' ? '#000000' : '#E5E7EB'
+            }}
+            edges={['top']}
+        >
             <ScrollView
                 className="flex-1"
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                 showsVerticalScrollIndicator={false}
             >
                 {/* Header */}
-                <View className="bg-white dark:bg-gray-900 px-5 pt-4 pb-5 rounded-3xl mx-3">
+                <View className={`${colorScheme === 'dark' ? 'bg-gray-900' : 'bg-white'} px-5 pt-4 pb-5 rounded-3xl mx-3`}>
+                    {/* <View className="flex-1 bg-background dark:bg-gray-900"> */}
                     <View className="flex-row justify-between items-center mb-4">
                         <View>
-                            <Text className="text-gray-500 dark:text-gray-400 text-sm">{getGreeting()}</Text>
+                            <Text className={`${colorScheme === 'dark' ? 'text-gray-400' : 'text-gray-500'} text-sm`}>{getGreeting()}</Text>
                             <Text className="text-green-500 text-xl font-bold">{user?.name || 'Guest'}</Text>
                         </View>
-                        <TouchableOpacity className="w-11 h-11 bg-green-100 dark:bg-green-900 rounded-full items-center justify-center">
+                        <TouchableOpacity className={`w-11 h-11 ${colorScheme === 'dark' ? 'bg-gray-800' : 'bg-green-100'} rounded-full items-center justify-center`}>
                             <Bell size={22} color={Colors.primary[500]} />
                         </TouchableOpacity>
                     </View>
@@ -199,22 +173,22 @@ export default function HomeScreen() {
 
                 {/* Quick Stats */}
                 <View className="flex-row px-4 mx-auto gap-3">
-                    <View className="flex-1 bg-primary-50 dark:bg-primary-900 rounded-2xl p-4">
-                        <Text className="text-primary-600 dark:text-primary-300 text-2xl font-bold">
+                    <View className={`flex-1 ${colorScheme === 'dark' ? 'bg-gray-900 border border-gray-800' : 'bg-primary-50'} rounded-2xl p-4`}>
+                        <Text className={`${colorScheme === 'dark' ? 'text-primary-400' : 'text-primary-600'} text-2xl font-bold`}>
                             {messes.filter((m) => m.status === 'free').length}+
                         </Text>
-                        <Text className="text-primary-700 dark:text-primary-200 text-sm">Available Messes</Text>
+                        <Text className={`${colorScheme === 'dark' ? 'text-gray-400' : 'text-primary-700'} text-sm`}>Available Messes</Text>
                     </View>
-                    <View className="flex-1 bg-secondary-50 dark:bg-secondary-900 rounded-2xl p-4">
-                        <Text className="text-secondary-600 dark:text-secondary-300 text-2xl font-bold">{messes.length}+</Text>
-                        <Text className="text-secondary-700 dark:text-secondary-200 text-sm">Total Listings</Text>
+                    <View className={`flex-1 ${colorScheme === 'dark' ? 'bg-gray-900 border border-gray-800' : 'bg-secondary-50'} rounded-2xl p-4`}>
+                        <Text className={`${colorScheme === 'dark' ? 'text-secondary-400' : 'text-secondary-600'} text-2xl font-bold`}>{messes.length}+</Text>
+                        <Text className={`${colorScheme === 'dark' ? 'text-gray-400' : 'text-secondary-700'} text-sm`}>Total Listings</Text>
                     </View>
                 </View>
 
                 {/* Featured Messes */}
                 <View className="mt-6 px-4">
                     <View className="flex-row justify-between items-center mb-4">
-                        <Text className="text-gray-800 dark:text-white text-lg font-bold">Featured Messes</Text>
+                        <Text className={`${colorScheme === 'dark' ? 'text-white' : 'text-gray-800'} text-lg font-bold`}>Featured Messes</Text>
                         <TouchableOpacity
                             onPress={() => router.push('/(tabs)/search')}
                             className="flex-row items-center"
@@ -227,20 +201,21 @@ export default function HomeScreen() {
                     {isLoading ? (
                         <Loading text="Loading messes..." />
                     ) : messes.length === 0 ? (
-                        <View className="bg-white dark:bg-gray-900 rounded-2xl p-8 items-center">
+                        <View className={`${colorScheme === 'dark' ? 'bg-gray-900' : 'bg-white'} rounded-2xl p-8 items-center`}>
                             <MapPin size={48} color={Colors.gray[300]} />
-                            <Text className="text-gray-500 dark:text-gray-400 mt-4 text-center">
+                            <Text className={`${colorScheme === 'dark' ? 'text-gray-400' : 'text-gray-500'} mt-4 text-center`}>
                                 No messes available at the moment
                             </Text>
                         </View>
                     ) : (
-                        messes.slice(0, 5).map((mess) => (
+                        messes.map((mess) => (
                             <MessCard
                                 key={mess._id}
                                 mess={mess}
                                 onPress={() => router.push(`/mess/${mess._id}`)}
                                 onFavoritePress={user ? () => handleFavoriteToggle(mess._id) : undefined}
                                 isFavorite={isFavorite(mess._id)}
+                                className="mb-6"
                             />
                         ))
                     )}

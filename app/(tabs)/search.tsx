@@ -7,6 +7,7 @@ import {
     FlatList,
     RefreshControl,
     Modal,
+    ScrollView,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -17,6 +18,7 @@ import {
     ArrowUpDown,
     MapPin,
 } from 'lucide-react-native';
+import { useColorScheme } from 'nativewind';
 import Toast from 'react-native-toast-message';
 import { MessCard, Loading, Button } from '../../components/ui';
 import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
@@ -30,6 +32,7 @@ export default function SearchScreen() {
     const { messes, isLoading, pagination, filters } = useAppSelector((state) => state.mess);
     const { user } = useAppSelector((state) => state.auth);
     const savedMesses = useAppSelector((state) => state.favorites?.savedMesses ?? []);
+    const { colorScheme } = useColorScheme();
 
     const [searchQuery, setSearchQuery] = useState('');
     const [showFilters, setShowFilters] = useState(false);
@@ -127,226 +130,251 @@ export default function SearchScreen() {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-gray-200" edges={['top']}>
-            {/* Search Header */}
-            <View className="bg-white px-4 pt-4 pb-4 shadow-sm rounded-t-3xl mx-4">
-                <View className="flex-row items-center gap-3 mb-2">
-                    <View className="flex-1 flex-row items-center bg-gray-100 rounded-xl px-4 py-3">
-                        <Search size={20} color={Colors.gray[400]} />
-                        <TextInput
-                            placeholder="Search mess, location..."
-                            value={searchQuery}
-                            onChangeText={setSearchQuery}
-                            onSubmitEditing={handleSearch}
-                            returnKeyType="search"
-                            className="flex-1 ml-3 text-gray-800"
-                            placeholderTextColor={Colors.gray[400]}
-                        />
-                        {searchQuery.length > 0 && (
-                            <TouchableOpacity onPress={() => setSearchQuery('')}>
-                                <X size={18} color={Colors.gray[400]} />
-                            </TouchableOpacity>
-                        )}
+        <SafeAreaView
+            style={{
+                flex: 1,
+                backgroundColor: colorScheme === 'dark' ? '#000000' : '#E5E7EB'
+            }}
+            edges={['top']}
+        >
+            {/* Main Content */}
+            <View className="flex-1">
+                {/* Search Header & Quick Filters */}
+                <View className={`${colorScheme === 'dark' ? 'bg-gray-900' : 'bg-white'} px-4 pt-4 pb-4 shadow-sm rounded-t-3xl mx-4 mb-6`}>
+                    <View className="flex-row items-center gap-3 mb-4">
+                        <View className={`flex-1 flex-row items-center ${colorScheme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'} rounded-xl px-4 h-12`}>
+                            <Search size={20} color={Colors.gray[500]} />
+                            <TextInput
+                                placeholder="Search mess, location..."
+                                value={searchQuery}
+                                onChangeText={setSearchQuery}
+                                onSubmitEditing={handleSearch}
+                                returnKeyType="search"
+                                className={`flex-1 ml-3 text-base h-full ${colorScheme === 'dark' ? 'text-gray-200' : 'text-gray-800'}`}
+                                placeholderTextColor={Colors.gray[500]}
+                                style={{ textAlignVertical: 'center', paddingVertical: 0 }}
+                            />
+                            {searchQuery.length > 0 && (
+                                <TouchableOpacity onPress={() => setSearchQuery('')}>
+                                    <X size={18} color={Colors.gray[500]} />
+                                </TouchableOpacity>
+                            )}
+                        </View>
+                        <TouchableOpacity
+                            onPress={() => setShowFilters(true)}
+                            className="w-11 h-11 bg-primary-500 rounded-xl items-center justify-center"
+                        >
+                            <SlidersHorizontal size={20} color="#fff" />
+                        </TouchableOpacity>
                     </View>
-                    <TouchableOpacity
-                        onPress={() => setShowFilters(true)}
-                        className="w-11 h-11 bg-primary-500 rounded-xl items-center justify-center"
-                    >
-                        <SlidersHorizontal size={20} color="#fff" />
-                    </TouchableOpacity>
+
+                    {/* Quick Filters */}
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-2">
+                        {['All', 'Available', 'Top Rated', 'Lowest Price'].map((filter) => (
+                            <TouchableOpacity
+                                key={filter}
+                                onPress={() => {
+                                    if (filter === 'Lowest Price') {
+                                        setLocalFilters((prev) => ({ ...prev, sortBy: 'price', sortOrder: 'asc' }));
+                                    } else if (filter === 'Top Rated') {
+                                        setLocalFilters((prev) => ({ ...prev, sortBy: 'rating', sortOrder: 'desc' }));
+                                    }
+                                    loadMesses(1);
+                                }}
+                                className={`px-4 py-2 rounded-full mr-2 ${filter === 'All' ? 'bg-primary-500' : (colorScheme === 'dark' ? 'bg-gray-800' : 'bg-gray-100')
+                                    }`}
+                            >
+                                <Text className={filter === 'All' ? 'text-white font-medium' : (colorScheme === 'dark' ? 'text-gray-300' : 'text-gray-600')}>
+                                    {filter}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                    </ScrollView>
                 </View>
 
-                {/* Quick Filters */}
-                <View className="flex-row mt-3 gap-2">
-                    {['All', 'Available', 'Top Rated', 'Lowest Price'].map((filter) => (
-                        <TouchableOpacity
-                            key={filter}
-                            onPress={() => {
-                                if (filter === 'Lowest Price') {
-                                    setLocalFilters((prev) => ({ ...prev, sortBy: 'price', sortOrder: 'asc' }));
-                                    loadMesses(1);
-                                } else if (filter === 'Top Rated') {
-                                    setLocalFilters((prev) => ({ ...prev, sortBy: 'rating', sortOrder: 'desc' }));
-                                    loadMesses(1);
-                                }
-                            }}
-                            className={`px-3 py-2 rounded-full ${filter === 'All' ? 'bg-primary-500' : 'bg-gray-100'
-                                }`}
-                        >
-                            <Text className={filter === 'All' ? 'text-white font-medium' : 'text-gray-600'}>
-                                {filter}
-                            </Text>
-                        </TouchableOpacity>
-                    ))}
-                </View>
+                {/* Results List */}
+                <FlatList
+                    data={messes}
+                    renderItem={({ item }) => (
+                        <View className="px-4 mb-4">
+                            <MessCard
+                                mess={item}
+                                onPress={() => router.push(`/mess/${item._id}`)}
+                                onFavoritePress={user ? () => handleFavoriteToggle(item._id) : undefined}
+                                isFavorite={isFavorite(item._id)}
+                            />
+                        </View>
+                    )}
+                    keyExtractor={(item) => item._id}
+                    contentContainerStyle={{ paddingBottom: 20 }}
+                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+                    onEndReached={loadMore}
+                    onEndReachedThreshold={0.5}
+                    ListEmptyComponent={() => (
+                        !isLoading ? (
+                            <View className="items-center justify-center py-20">
+                                <MapPin size={48} color={Colors.gray[300]} />
+                                <Text className={`${colorScheme === 'dark' ? 'text-gray-400' : 'text-gray-500'} mt-4 text-center text-lg`}>
+                                    No messes found
+                                </Text>
+                                <Text className={`${colorScheme === 'dark' ? 'text-gray-500' : 'text-gray-400'} mt-2 text-center`}>
+                                    Try adjusting your search or filters
+                                </Text>
+                            </View>
+                        ) : null
+                    )}
+                    ListFooterComponent={() => (
+                        isLoading ? <Loading text="Loading results..." /> : null
+                    )}
+                />
             </View>
 
-            {/* Results */}
-            <FlatList
-                data={messes}
-                keyExtractor={(item) => item._id}
-                contentContainerStyle={{ padding: 16 }}
-                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-                ListHeaderComponent={() => (
-                    <Text className="text-gray-500 mb-3">
-                        {messes.length} {messes.length === 1 ? 'mess' : 'messes'} found
-                    </Text>
-                )}
-                renderItem={({ item }) => (
-                    <MessCard
-                        mess={item}
-                        onPress={() => router.push(`/mess/${item._id}`)}
-                        onFavoritePress={user ? () => handleFavoriteToggle(item._id) : undefined}
-                        isFavorite={isFavorite(item._id)}
-                    />
-                )}
-                ListEmptyComponent={() =>
-                    !isLoading ? (
-                        <View className="items-center py-12">
-                            <MapPin size={48} color={Colors.gray[300]} />
-                            <Text className="text-gray-500 mt-4">No messes found</Text>
-                            <Text className="text-gray-400 text-sm">Try adjusting your search or filters</Text>
-                        </View>
-                    ) : null
-                }
-                ListFooterComponent={() =>
-                    isLoading ? <Loading text="Loading..." /> : <View className="h-4" />
-                }
-                onEndReached={loadMore}
-                onEndReachedThreshold={0.5}
-            />
-
             {/* Filter Modal */}
-            <Modal visible={showFilters} animationType="slide" transparent>
-                <View className="flex-1 bg-black/50 justify-end">
-                    <View className="bg-white rounded-t-3xl p-6 max-h-[80%]">
-                        <View className="flex-row justify-between items-center mb-6">
-                            <Text className="text-xl font-bold text-gray-800">Filters</Text>
-                            <TouchableOpacity onPress={() => setShowFilters(false)}>
-                                <X size={24} color={Colors.gray[600]} />
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={showFilters}
+                onRequestClose={() => setShowFilters(false)}
+            >
+                <View className="flex-1 justify-end bg-black/50">
+                    <View className={`${colorScheme === 'dark' ? 'bg-gray-900' : 'bg-white'} rounded-t-3xl h-[85%] w-full flex-col`}>
+                        {/* Modal Header */}
+                        <View className={`flex-row justify-between items-center p-5 border-b ${colorScheme === 'dark' ? 'border-gray-800' : 'border-gray-100'}`}>
+                            <Text className={`text-xl font-bold ${colorScheme === 'dark' ? 'text-white' : 'text-gray-800'}`}>Filters</Text>
+                            <TouchableOpacity onPress={() => setShowFilters(false)} className="p-2">
+                                <X size={24} color={Colors.gray[500]} />
                             </TouchableOpacity>
                         </View>
 
-                        {/* Location */}
-                        <View className="mb-5">
-                            <Text className="text-gray-700 font-medium mb-2">Location</Text>
-                            <TextInput
-                                placeholder="Enter location"
-                                value={localFilters.location}
-                                onChangeText={(v) => setLocalFilters((prev) => ({ ...prev, location: v }))}
-                                className="bg-gray-100 rounded-xl px-4 py-3 text-gray-800"
-                                placeholderTextColor={Colors.gray[400]}
-                            />
-                        </View>
-
-                        {/* Room Type */}
-                        <View className="mb-5">
-                            <Text className="text-gray-700 font-medium mb-2">Room Type</Text>
-                            <View className="flex-row flex-wrap gap-2">
-                                {RoomTypes.map((type) => (
-                                    <TouchableOpacity
-                                        key={type}
-                                        onPress={() =>
-                                            setLocalFilters((prev) => ({
-                                                ...prev,
-                                                roomType: prev.roomType === type ? '' : type,
-                                            }))
-                                        }
-                                        className={`px-4 py-2 rounded-full border ${localFilters.roomType === type
-                                            ? 'bg-primary-500 border-primary-500'
-                                            : 'border-gray-300'
-                                            }`}
-                                    >
-                                        <Text
-                                            className={
-                                                localFilters.roomType === type ? 'text-white' : 'text-gray-600'
-                                            }
-                                        >
-                                            {type}
-                                        </Text>
-                                    </TouchableOpacity>
-                                ))}
+                        <ScrollView className="flex-1 px-5 pt-2" showsVerticalScrollIndicator={false}>
+                            {/* Location */}
+                            <View className="mb-6 mt-4">
+                                <Text className={`${colorScheme === 'dark' ? 'text-gray-300' : 'text-gray-700'} font-medium mb-3`}>Location</Text>
+                                <TextInput
+                                    placeholder="Enter location"
+                                    value={localFilters.location}
+                                    onChangeText={(v) => setLocalFilters((prev) => ({ ...prev, location: v }))}
+                                    className={`${colorScheme === 'dark' ? 'bg-gray-800 text-gray-200' : 'bg-gray-100 text-gray-800'} rounded-xl px-4 py-3.5`}
+                                    placeholderTextColor={Colors.gray[400]}
+                                />
                             </View>
-                        </View>
 
-                        {/* Gender Preference */}
-                        <View className="mb-5">
-                            <Text className="text-gray-700 font-medium mb-2">Gender Preference</Text>
-                            <View className="flex-row gap-2">
-                                {GenderPreferences.map((pref) => (
-                                    <TouchableOpacity
-                                        key={pref}
-                                        onPress={() =>
-                                            setLocalFilters((prev) => ({
-                                                ...prev,
-                                                genderPreference: prev.genderPreference === pref ? '' : pref,
-                                            }))
-                                        }
-                                        className={`flex-1 py-3 rounded-xl border items-center ${localFilters.genderPreference === pref
-                                            ? 'bg-primary-500 border-primary-500 rounded-xl'
-                                            : 'border-gray-300 rounded-xl'
-                                            }`}
-                                    >
-                                        <Text
-                                            className={
-                                                localFilters.genderPreference === pref ? 'text-white font-medium rounded-xl' : 'text-gray-600 rounded-xl'
+                            {/* Room Type */}
+                            <View className="mb-6">
+                                <Text className={`${colorScheme === 'dark' ? 'text-gray-300' : 'text-gray-700'} font-medium mb-3`}>Room Type</Text>
+                                <View className="flex-row flex-wrap gap-2">
+                                    {RoomTypes.map((type) => (
+                                        <TouchableOpacity
+                                            key={type}
+                                            onPress={() =>
+                                                setLocalFilters((prev) => ({
+                                                    ...prev,
+                                                    roomType: prev.roomType === type ? '' : type,
+                                                }))
                                             }
+                                            className={`px-5 py-2.5 rounded-full border ${localFilters.roomType === type
+                                                ? 'bg-primary-500 border-primary-500'
+                                                : (colorScheme === 'dark' ? 'border-gray-700' : 'border-gray-300')
+                                                }`}
                                         >
-                                            {pref}
-                                        </Text>
-                                    </TouchableOpacity>
-                                ))}
+                                            <Text
+                                                className={
+                                                    localFilters.roomType === type ? 'text-white font-medium' : (colorScheme === 'dark' ? 'text-gray-300' : 'text-gray-600')
+                                                }
+                                            >
+                                                {type}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    ))}
+                                </View>
                             </View>
-                        </View>
 
-                        {/* Sort */}
-                        <View className="mb-6">
-                            <Text className="text-gray-700 font-medium mb-2">Sort By</Text>
-                            <View className="flex-row flex-wrap gap-2">
-                                {([
-                                    { label: 'Latest', value: 'createdAt' },
-                                    { label: 'Price', value: 'price' },
-                                    { label: 'Rating', value: 'rating' },
-                                    { label: 'Views', value: 'views' },
-                                ] as { label: string; value: 'createdAt' | 'price' | 'rating' | 'views' }[]).map((item) => (
-                                    <TouchableOpacity
-                                        key={item.value}
-                                        onPress={() =>
-                                            setLocalFilters((prev) => ({
-                                                ...prev,
-                                                sortBy: item.value,
-                                            }))
-                                        }
-                                        className={`px-4 py-2 rounded-full border ${localFilters.sortBy === item.value
-                                            ? 'bg-secondary-500 border-secondary-500'
-                                            : 'border-gray-300'
-                                            }`}
-                                    >
-                                        <Text
-                                            className={
-                                                localFilters.sortBy === item.value ? 'text-white' : 'text-gray-600'
+                            {/* Gender Preference */}
+                            <View className="mb-6">
+                                <Text className={`${colorScheme === 'dark' ? 'text-gray-300' : 'text-gray-700'} font-medium mb-3`}>Gender Preference</Text>
+                                <View className="flex-row gap-3">
+                                    {GenderPreferences.map((pref) => (
+                                        <TouchableOpacity
+                                            key={pref}
+                                            onPress={() =>
+                                                setLocalFilters((prev) => ({
+                                                    ...prev,
+                                                    genderPreference: prev.genderPreference === pref ? '' : pref,
+                                                }))
                                             }
+                                            className={`flex-1 py-3.5 rounded-xl border items-center ${localFilters.genderPreference === pref
+                                                ? 'bg-primary-500 border-primary-500'
+                                                : (colorScheme === 'dark' ? 'border-gray-700' : 'border-gray-300')
+                                                }`}
                                         >
-                                            {item.label}
-                                        </Text>
-                                    </TouchableOpacity>
-                                ))}
+                                            <Text
+                                                className={
+                                                    localFilters.genderPreference === pref ? 'text-white font-medium' : (colorScheme === 'dark' ? 'text-gray-300' : 'text-gray-600')
+                                                }
+                                            >
+                                                {pref}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    ))}
+                                </View>
                             </View>
-                        </View>
 
-                        {/* Actions */}
-                        <View className="flex-row gap-2 ">
-                            <Button
-                                title="Clear"
-                                onPress={clearFilters}
-                                variant="outline"
-                                className="flex-1 mr-2"
-                            />
-                            <Button
-                                title="Apply Filters"
-                                onPress={applyFilters}
-                                className="flex-1 ml-2"
-                            />
+                            {/* Sort */}
+                            <View className="mb-6">
+                                <Text className={`${colorScheme === 'dark' ? 'text-gray-300' : 'text-gray-700'} font-medium mb-3`}>Sort By</Text>
+                                <View className="flex-row flex-wrap gap-2">
+                                    {([
+                                        { label: 'Latest', value: 'createdAt' },
+                                        { label: 'Price', value: 'price' },
+                                        { label: 'Rating', value: 'rating' },
+                                        { label: 'Views', value: 'views' },
+                                    ] as { label: string; value: 'createdAt' | 'price' | 'rating' | 'views' }[]).map((item) => (
+                                        <TouchableOpacity
+                                            key={item.value}
+                                            onPress={() =>
+                                                setLocalFilters((prev) => ({
+                                                    ...prev,
+                                                    sortBy: item.value,
+                                                }))
+                                            }
+                                            className={`px-5 py-2.5 rounded-full border ${localFilters.sortBy === item.value
+                                                ? 'bg-secondary-500 border-secondary-500'
+                                                : (colorScheme === 'dark' ? 'border-gray-700' : 'border-gray-300')
+                                                }`}
+                                        >
+                                            <Text
+                                                className={
+                                                    localFilters.sortBy === item.value ? 'text-white font-medium' : (colorScheme === 'dark' ? 'text-gray-300' : 'text-gray-600')
+                                                }
+                                            >
+                                                {item.label}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    ))}
+                                </View>
+                            </View>
+                            <View className="h-20" />
+                        </ScrollView>
+
+                        {/* Modal Actions */}
+                        <View className={`px-5 py-4 border-t ${colorScheme === 'dark' ? 'border-gray-800' : 'border-gray-100'}`}>
+                            <View className="flex-row">
+                                <Button
+                                    title="Clear"
+                                    onPress={() => {
+                                        clearFilters();
+                                        setShowFilters(false);
+                                    }}
+                                    variant="outline"
+                                    className="flex-1 mr-2"
+                                />
+
+                                <Button
+                                    title="Apply Filters"
+                                    onPress={applyFilters}
+                                    className="flex-1"
+                                />
+                            </View>
                         </View>
                     </View>
                 </View>

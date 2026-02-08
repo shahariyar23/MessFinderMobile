@@ -23,7 +23,7 @@ export const Badge: React.FC<BadgeProps> = ({
             case 'info':
                 return 'bg-blue-100';
             default:
-                return 'bg-gray-100';
+                return 'bg-gray-100 dark:bg-gray-700';
         }
     };
 
@@ -38,7 +38,7 @@ export const Badge: React.FC<BadgeProps> = ({
             case 'info':
                 return 'text-blue-700';
             default:
-                return 'text-gray-700';
+                return 'text-gray-700 dark:text-gray-200';
         }
     };
 

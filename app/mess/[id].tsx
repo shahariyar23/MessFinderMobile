@@ -26,6 +26,7 @@ import {
     Eye,
 } from 'lucide-react-native';
 import Toast from 'react-native-toast-message';
+import { useColorScheme } from 'nativewind';
 import { Button, Loading, Rating, Badge, Avatar } from '../../components/ui';
 import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
 import { fetchMessById } from '../../store/slices/messSlice';
@@ -43,6 +44,7 @@ export default function MessDetailScreen() {
     const { currentMess, isLoading } = useAppSelector((state) => state.mess);
     const { savedMesses } = useAppSelector((state) => state.favorites);
     const { isAuthenticated, isLoading: authLoading } = useAppSelector((state) => state.auth);
+    const { colorScheme } = useColorScheme();
 
     const [activeImageIndex, setActiveImageIndex] = useState(0);
     const [reviews, setReviews] = useState<Review[]>([]);
@@ -168,9 +170,9 @@ export default function MessDetailScreen() {
 
     if (loadError) {
         return (
-            <SafeAreaView className="flex-1 bg-white items-center justify-center px-6">
-                <Text className="text-xl font-bold text-gray-800 mb-2">Failed to Load</Text>
-                <Text className="text-gray-500 text-center mb-6">{loadError}</Text>
+            <SafeAreaView className={`flex-1 ${colorScheme === 'dark' ? 'bg-black' : 'bg-white'} items-center justify-center px-6`}>
+                <Text className={`text-xl font-bold ${colorScheme === 'dark' ? 'text-white' : 'text-gray-800'} mb-2`}>Failed to Load</Text>
+                <Text className={`${colorScheme === 'dark' ? 'text-gray-400' : 'text-gray-500'} text-center mb-6`}>{loadError}</Text>
                 <TouchableOpacity
                     onPress={() => {
                         setLoadError(null);
@@ -205,32 +207,32 @@ export default function MessDetailScreen() {
                     headerLeft: () => (
                         <TouchableOpacity
                             onPress={() => router.back()}
-                            className="w-10 h-10 rounded-full items-center justify-center"
+                            className={`w-10 h-10 rounded-full items-center justify-center`}
                         >
-                            <ChevronLeft size={24} color="#0e0505ff" />
+                            <ChevronLeft size={24} color={colorScheme === 'dark' ? '#fff' : '#0e0505ff'} />
                         </TouchableOpacity>
                     ),
                     headerRight: () => (
                         <View className="flex-row gap-2">
                             <TouchableOpacity
                                 onPress={handleFavoriteToggle}
-                                className="w-10 h-10 rounded-full items-center justify-center"
+                                className={`w-10 h-10 rounded-full items-center justify-center`}
                             >
                                 <Heart
                                     size={20}
-                                    color={isSaved ? Colors.error : '#0e0505ff'}
+                                    color={isSaved ? Colors.error : (colorScheme === 'dark' ? '#fff' : '#0e0505ff')}
                                     fill={isSaved ? Colors.error : 'transparent'}
                                 />
                             </TouchableOpacity>
-                            <TouchableOpacity className="w-10 h-10 rounded-full items-center justify-center">
-                                <Share2 size={20} color="#0e0505ff" />
+                            <TouchableOpacity className={`w-10 h-10 rounded-full items-center justify-center `}>
+                                <Share2 size={20} color={colorScheme === 'dark' ? '#fff' : '#0e0505ff'} />
                             </TouchableOpacity>
                         </View>
                     ),
                 }}
             />
 
-            <ScrollView className="flex-1 bg-white" showsVerticalScrollIndicator={false}>
+            <ScrollView className={`flex-1 ${colorScheme === 'dark' ? 'bg-black' : 'bg-white'}`} showsVerticalScrollIndicator={false}>
                 {/* Image Gallery */}
                 <View className="relative">
                     <FlatList
@@ -270,10 +272,10 @@ export default function MessDetailScreen() {
                     {/* Title & Status */}
                     <View className="flex-row justify-between items-start mb-3">
                         <View className="flex-1">
-                            <Text className="text-2xl font-bold text-gray-800">{currentMess.title}</Text>
+                            <Text className={`text-2xl font-bold ${colorScheme === 'dark' ? 'text-white' : 'text-gray-800'}`}>{currentMess.title}</Text>
                             <View className="flex-row items-center mt-1">
                                 <MapPin size={14} color={Colors.gray[500]} />
-                                <Text className="text-gray-500 ml-1 flex-1">{currentMess.address}</Text>
+                                <Text className={`${colorScheme === 'dark' ? 'text-gray-400' : 'text-gray-500'} ml-1 flex-1`}>{currentMess.address}</Text>
                             </View>
                         </View>
                         <Badge
@@ -283,13 +285,13 @@ export default function MessDetailScreen() {
                     </View>
 
                     {/* Price & Rating */}
-                    <View className="flex-row items-center justify-between bg-gray-50 rounded-2xl p-4 mb-5">
+                    <View className={`flex-row items-center justify-between ${colorScheme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} rounded-2xl p-4 mb-5`}>
                         <View>
-                            <Text className="text-gray-500 text-sm">Monthly Rent</Text>
+                            <Text className={`${colorScheme === 'dark' ? 'text-gray-400' : 'text-gray-500'} text-sm`}>Monthly Rent</Text>
                             <Text className="text-primary-600 text-2xl font-bold">
                                 ৳{currentMess.payPerMonth?.toLocaleString()}
                             </Text>
-                            <Text className="text-gray-400 text-xs">
+                            <Text className={`${colorScheme === 'dark' ? 'text-gray-500' : 'text-gray-400'} text-xs`}>
                                 + {currentMess.advancePaymentMonth} month advance
                             </Text>
                         </View>
@@ -304,19 +306,19 @@ export default function MessDetailScreen() {
 
                     {/* Quick Info */}
                     <View className="flex-row mb-5 gap-3">
-                        <View className="flex-1 bg-blue-50 rounded-xl p-3 items-center">
+                        <View className={`flex-1 ${colorScheme === 'dark' ? 'bg-blue-900/20' : 'bg-blue-50'} rounded-xl p-3 items-center`}>
                             <Users size={20} color={Colors.secondary[500]} />
-                            <Text className="text-gray-700 font-medium mt-1">{currentMess.roomType}</Text>
-                            <Text className="text-gray-500 text-xs">Room Type</Text>
+                            <Text className={`${colorScheme === 'dark' ? 'text-gray-300' : 'text-gray-700'} font-medium mt-1`}>{currentMess.roomType}</Text>
+                            <Text className={`${colorScheme === 'dark' ? 'text-gray-400' : 'text-gray-500'} text-xs`}>Room Type</Text>
                         </View>
-                        <View className="flex-1 bg-purple-50 rounded-xl p-3 items-center">
+                        <View className={`flex-1 ${colorScheme === 'dark' ? 'bg-purple-900/20' : 'bg-purple-50'} rounded-xl p-3 items-center`}>
                             <Users size={20} color="#8b5cf6" />
-                            <Text className="text-gray-700 font-medium mt-1">{currentMess.genderPreference}</Text>
-                            <Text className="text-gray-500 text-xs">Preference</Text>
+                            <Text className={`${colorScheme === 'dark' ? 'text-gray-300' : 'text-gray-700'} font-medium mt-1`}>{currentMess.genderPreference}</Text>
+                            <Text className={`${colorScheme === 'dark' ? 'text-gray-400' : 'text-gray-500'} text-xs`}>Preference</Text>
                         </View>
-                        <View className="flex-1 bg-amber-50 rounded-xl p-3 items-center">
+                        <View className={`flex-1 ${colorScheme === 'dark' ? 'bg-amber-900/20' : 'bg-amber-50'} rounded-xl p-3 items-center`}>
                             <Calendar size={20} color={Colors.accent[500]} />
-                            <Text className="text-gray-700 font-medium mt-1">
+                            <Text className={`${colorScheme === 'dark' ? 'text-gray-300' : 'text-gray-700'} font-medium mt-1`}>
                                 {currentMess.availableFrom
                                     ? new Date(currentMess.availableFrom).toLocaleDateString('en-GB', {
                                         day: 'numeric',
@@ -324,26 +326,26 @@ export default function MessDetailScreen() {
                                     })
                                     : 'Now'}
                             </Text>
-                            <Text className="text-gray-500 text-xs">Available</Text>
+                            <Text className={`${colorScheme === 'dark' ? 'text-gray-400' : 'text-gray-500'} text-xs`}>Available</Text>
                         </View>
                     </View>
 
                     {/* Description */}
                     <View className="mb-5">
-                        <Text className="text-gray-800 font-semibold text-lg mb-2">Description</Text>
-                        <Text className="text-gray-600 leading-6">{currentMess.description}</Text>
+                        <Text className={`text-lg font-semibold mb-2 ${colorScheme === 'dark' ? 'text-white' : 'text-gray-800'}`}>Description</Text>
+                        <Text className={`${colorScheme === 'dark' ? 'text-gray-300' : 'text-gray-600'} leading-6`}>{currentMess.description}</Text>
                     </View>
 
                     {/* Facilities */}
                     <View className="mb-5">
-                        <Text className="text-gray-800 font-semibold text-lg mb-3">Facilities</Text>
+                        <Text className={`text-lg font-semibold mb-3 ${colorScheme === 'dark' ? 'text-white' : 'text-gray-800'}`}>Facilities</Text>
                         <View className="flex-row flex-wrap gap-2">
                             {currentMess.facilities?.map((facility, index) => (
                                 <View
                                     key={index}
-                                    className="flex-row items-center bg-primary-50 px-3 py-2 rounded-lg"
+                                    className={`flex-row items-center px-3 py-2 rounded-lg ${colorScheme === 'dark' ? 'bg-primary-900/30' : 'bg-primary-50'}`}
                                 >
-                                    <Text className="text-primary-700">{facility}</Text>
+                                    <Text className={`${colorScheme === 'dark' ? 'text-primary-300' : 'text-primary-700'}`}>{facility}</Text>
                                 </View>
                             ))}
                         </View>
@@ -352,14 +354,14 @@ export default function MessDetailScreen() {
                     {/* Room Features */}
                     {currentMess.roomFeatures?.length > 0 && (
                         <View className="mb-5">
-                            <Text className="text-gray-800 font-semibold text-lg mb-3">Room Features</Text>
+                            <Text className={`text-lg font-semibold mb-3 ${colorScheme === 'dark' ? 'text-white' : 'text-gray-800'}`}>Room Features</Text>
                             <View className="flex-row flex-wrap gap-2">
                                 {currentMess.roomFeatures.map((feature, index) => (
                                     <View
                                         key={index}
-                                        className="bg-gray-100 px-3 py-2 rounded-lg"
+                                        className={`${colorScheme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'} px-3 py-2 rounded-lg`}
                                     >
-                                        <Text className="text-gray-700">{feature}</Text>
+                                        <Text className={`${colorScheme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>{feature}</Text>
                                     </View>
                                 ))}
                             </View>
@@ -368,13 +370,13 @@ export default function MessDetailScreen() {
 
                     {/* Owner Info */}
                     {owner && (
-                        <View className="bg-gray-50 rounded-2xl p-4 mb-5">
-                            <Text className="text-gray-800 font-semibold text-lg mb-3">Owner</Text>
+                        <View className={`${colorScheme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} rounded-2xl p-4 mb-5`}>
+                            <Text className={`text-lg font-semibold mb-3 ${colorScheme === 'dark' ? 'text-white' : 'text-gray-800'}`}>Owner</Text>
                             <View className="flex-row items-center">
                                 <Avatar name={owner.name} size="lg" />
                                 <View className="flex-1 ml-3">
-                                    <Text className="text-gray-800 font-semibold">{owner.name}</Text>
-                                    <Text className="text-gray-500 text-sm">{owner.email}</Text>
+                                    <Text className={`${colorScheme === 'dark' ? 'text-white' : 'text-gray-800'} font-semibold`}>{owner.name}</Text>
+                                    <Text className={`${colorScheme === 'dark' ? 'text-gray-400' : 'text-gray-500'} text-sm`}>{owner.email}</Text>
                                 </View>
                                 <TouchableOpacity
                                     onPress={handleCall}
@@ -389,7 +391,7 @@ export default function MessDetailScreen() {
                     {/* Reviews Preview */}
                     <View className="mb-5">
                         <View className="flex-row justify-between items-center mb-3">
-                            <Text className="text-gray-800 font-semibold text-lg">
+                            <Text className={`text-lg font-semibold ${colorScheme === 'dark' ? 'text-white' : 'text-gray-800'}`}>
                                 Reviews ({reviews.length})
                             </Text>
                             {reviews.length > 0 && (
@@ -400,26 +402,26 @@ export default function MessDetailScreen() {
                         </View>
                         {reviews.length > 0 ? (
                             reviews.slice(0, 2).map((review) => (
-                                <View key={review._id} className="bg-gray-50 rounded-xl p-4 mb-2">
+                                <View key={review._id} className={`${colorScheme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} rounded-xl p-4 mb-2`}>
                                     <View className="flex-row items-center mb-2">
                                         <Avatar
                                             name={typeof review.user_id === 'object' ? review.user_id.name : 'User'}
                                             size="sm"
                                         />
                                         <View className="flex-1 ml-2">
-                                            <Text className="text-gray-800 font-medium">
+                                            <Text className={`${colorScheme === 'dark' ? 'text-white' : 'text-gray-800'} font-medium`}>
                                                 {typeof review.user_id === 'object' ? review.user_id.name : 'User'}
                                             </Text>
                                         </View>
                                         <Rating rating={review.rating} size="sm" showValue={false} />
                                     </View>
-                                    <Text className="text-gray-600 text-sm">{review.comment}</Text>
+                                    <Text className={`${colorScheme === 'dark' ? 'text-gray-300' : 'text-gray-600'} text-sm`}>{review.comment}</Text>
                                 </View>
                             ))
                         ) : (
-                            <View className="bg-gray-50 rounded-xl p-6 items-center">
+                            <View className={`${colorScheme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} rounded-xl p-6 items-center`}>
                                 <MessageCircle size={32} color={Colors.gray[300]} />
-                                <Text className="text-gray-500 mt-2">No reviews yet</Text>
+                                <Text className={`${colorScheme === 'dark' ? 'text-gray-400' : 'text-gray-500'} mt-2`}>No reviews yet</Text>
                             </View>
                         )}
                     </View>
@@ -432,12 +434,12 @@ export default function MessDetailScreen() {
             {/* Bottom Action Bar */}
             <SafeAreaView
                 edges={['bottom']}
-                className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-5 py-4"
+                className={`absolute bottom-0 left-0 right-0 ${colorScheme === 'dark' ? 'bg-black border-gray-800' : 'bg-white border-gray-100'} border-t px-5 py-4`}
             >
                 <View className="flex-row items-center gap-3">
                     <TouchableOpacity
                         onPress={handleCall}
-                        className="w-14 h-14 bg-primary-50 rounded-xl items-center justify-center border border-primary-200"
+                        className={`w-14 h-14 ${colorScheme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-primary-50 border-primary-200'} rounded-xl items-center justify-center border`}
                     >
                         <Phone size={24} color={Colors.primary[500]} />
                     </TouchableOpacity>

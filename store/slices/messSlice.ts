@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { MessState, Mess, MessFilters, SavedMess } from '../../types';
+import { MessState, Mess, MessFilters, SavedMess, HomeSlider } from '../../types';
 import messService from '../../services/messService';
 
 const initialState: MessState = {
@@ -9,6 +9,7 @@ const initialState: MessState = {
     error: null,
     pagination: null,
     filters: {},
+    homeSliders: [],
 };
 
 // Fetch all messes
@@ -56,6 +57,19 @@ export const searchMesses = createAsyncThunk(
             return response.data;
         } catch (error: any) {
             return rejectWithValue(error.message || 'Search failed');
+        }
+    }
+);
+
+// Fetch home page sliders
+export const fetchHomeSliders = createAsyncThunk(
+    'mess/fetchHomeSliders',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await messService.getHomeSliders();
+            return response.data;
+        } catch (error: any) {
+            return rejectWithValue(error.message || 'Failed to fetch home sliders');
         }
     }
 );
@@ -140,6 +154,21 @@ const messSlice = createSlice({
                 state.pagination = action.payload.pagination || null;
             })
             .addCase(searchMesses.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload as string;
+            });
+
+        // Fetch home sliders
+        builder
+            .addCase(fetchHomeSliders.pending, (state) => {
+                state.isLoading = true;
+                state.error = null;
+            })
+            .addCase(fetchHomeSliders.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.homeSliders = action.payload;
+            })
+            .addCase(fetchHomeSliders.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.payload as string;
             });

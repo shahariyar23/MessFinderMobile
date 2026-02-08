@@ -11,6 +11,7 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Calendar, MapPin, Clock, ChevronRight } from 'lucide-react-native';
 import { Loading, Badge } from '../../components/ui';
+import { useColorScheme } from 'nativewind';
 import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
 import { fetchUserBookings } from '../../store/slices/bookingSlice';
 import { Colors, BookingStatusColors, PaymentStatusColors } from '../../constants';
@@ -24,6 +25,7 @@ export default function BookingsScreen() {
     const { bookings, isLoading, counts } = useAppSelector((state) => state.booking);
     const [activeTab, setActiveTab] = useState<TabType>('upcoming');
     const [refreshing, setRefreshing] = useState(false);
+    const { colorScheme } = useColorScheme();
 
     useEffect(() => {
         loadBookings();
@@ -69,7 +71,7 @@ export default function BookingsScreen() {
         return (
             <TouchableOpacity
                 onPress={() => router.push(`/booking/${item._id}`)}
-                className="bg-white rounded-2xl mb-4 overflow-hidden shadow-sm"
+                className={`${colorScheme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-2xl mb-4 overflow-hidden shadow-sm`}
                 activeOpacity={0.9}
             >
                 <View className="flex-row">
@@ -80,7 +82,7 @@ export default function BookingsScreen() {
                     />
                     <View className="flex-1 p-4">
                         <View className="flex-row justify-between items-start mb-2">
-                            <Text className="text-gray-800 font-semibold flex-1 mr-2" numberOfLines={1}>
+                            <Text className={`${colorScheme === 'dark' ? 'text-white' : 'text-gray-800'} font-semibold flex-1 mr-2`} numberOfLines={1}>
                                 {mess?.title || 'Mess'}
                             </Text>
                             <Badge
@@ -92,22 +94,22 @@ export default function BookingsScreen() {
 
                         <View className="flex-row items-center mb-1">
                             <MapPin size={12} color={Colors.gray[500]} />
-                            <Text className="text-gray-500 text-xs ml-1" numberOfLines={1}>
+                            <Text className={`${colorScheme === 'dark' ? 'text-gray-400' : 'text-gray-500'} text-xs ml-1`} numberOfLines={1}>
                                 {mess?.address || 'Address'}
                             </Text>
                         </View>
 
                         <View className="flex-row items-center mb-2">
                             <Calendar size={12} color={Colors.gray[500]} />
-                            <Text className="text-gray-500 text-xs ml-1">
+                            <Text className={`${colorScheme === 'dark' ? 'text-gray-400' : 'text-gray-500'} text-xs ml-1`}>
                                 Check-in: {formatDate(item.checkInDate)}
                             </Text>
                         </View>
 
-                        <View className="flex-row justify-between items-center pt-2 border-t border-gray-100">
+                        <View className={`flex-row justify-between items-center pt-2 border-t ${colorScheme === 'dark' ? 'border-gray-700' : 'border-gray-100'}`}>
                             <View>
-                                <Text className="text-gray-500 text-xs">Total Amount</Text>
-                                <Text className="text-primary-600 font-bold">
+                                <Text className={`${colorScheme === 'dark' ? 'text-gray-400' : 'text-gray-500'} text-xs`}>Total Amount</Text>
+                                <Text className={`${colorScheme === 'dark' ? 'text-primary-400' : 'text-primary-600'} font-bold`}>
                                     ৳{item.totalAmount?.toLocaleString()}
                                 </Text>
                             </View>
@@ -119,7 +121,8 @@ export default function BookingsScreen() {
                                             PaymentStatusColors[item.paymentStatus] || Colors.gray[400],
                                     }}
                                 />
-                                <Text className="text-gray-600 text-xs capitalize">
+
+                                <Text className={`${colorScheme === 'dark' ? 'text-gray-300' : 'text-gray-600'} text-xs capitalize`}>
                                     {item.paymentStatus}
                                 </Text>
                                 <ChevronRight size={16} color={Colors.gray[400]} />
@@ -132,37 +135,20 @@ export default function BookingsScreen() {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-gray-200" edges={['top']}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: colorScheme === 'dark' ? '#000000' : '#E5E7EB' }} edges={['top']}>
+
             {/* Header */}
-            <View className="bg-white px-5 py-4">
-                <Text className="text-2xl font-bold text-gray-800">My Bookings</Text>
+            <View className={`${colorScheme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white'} px-5 py-4 mx-4 rounded-t-3xl`}>
+                <Text className={`text-2xl font-bold ${colorScheme === 'dark' ? 'text-white' : 'text-gray-800'}`}>My Bookings</Text>
             </View>
 
             {/* Tabs */}
-            <View className="bg-white px-5 pb-4 flex-row gap-3">
-                <TouchableOpacity
-                    onPress={() => setActiveTab('upcoming')}
-                    className={`flex-1 py-3 rounded-xl items-center ${activeTab === 'upcoming' ? 'bg-primary-500' : 'bg-gray-100'
-                        }`}
-                >
-                    <Text
-                        className={`font-medium ${activeTab === 'upcoming' ? 'text-white' : 'text-gray-600'
-                            }`}
-                    >
-                        Upcoming ({counts?.upcoming || 0})
-                    </Text>
+            <View className={`${colorScheme === 'dark' ? 'bg-gray-900' : 'bg-white'} px-5 pb-4 flex-row gap-3 mx-4`}>
+                <TouchableOpacity onPress={() => setActiveTab('upcoming')} className={`flex-1 py-3 rounded-xl items-center ${activeTab === 'upcoming' ? 'bg-primary-500' : (colorScheme === 'dark' ? 'bg-gray-800' : 'bg-gray-100')}`} >
+                    <Text className={`font-medium ${activeTab === 'upcoming' ? 'text-white' : (colorScheme === 'dark' ? 'text-gray-300' : 'text-gray-600')}`} > Upcoming ({counts?.upcoming || 0}) </Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() => setActiveTab('past')}
-                    className={`flex-1 py-3 rounded-xl items-center ${activeTab === 'past' ? 'bg-primary-500' : 'bg-gray-100'
-                        }`}
-                >
-                    <Text
-                        className={`font-medium ${activeTab === 'past' ? 'text-white' : 'text-gray-600'
-                            }`}
-                    >
-                        Past ({counts?.past || 0})
-                    </Text>
+                <TouchableOpacity onPress={() => setActiveTab('past')} className={`flex-1 py-3 rounded-xl items-center ${activeTab === 'past' ? 'bg-primary-500' : (colorScheme === 'dark' ? 'bg-gray-800' : 'bg-gray-100')}`} >
+                    <Text className={`font-medium ${activeTab === 'past' ? 'text-white' : (colorScheme === 'dark' ? 'text-gray-300' : 'text-gray-600')}`} > Past ({counts?.past || 0}) </Text>
                 </TouchableOpacity>
             </View>
 
@@ -171,22 +157,28 @@ export default function BookingsScreen() {
                 data={bookings}
                 keyExtractor={(item) => item._id}
                 contentContainerStyle={{ padding: 16, flexGrow: 1 }}
-                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
                 renderItem={renderBookingCard}
                 ListEmptyComponent={() =>
                     !isLoading ? (
                         <View className="flex-1 items-center justify-center py-20">
-                            <View className="w-20 h-20 bg-blue-50 rounded-full items-center justify-center mb-4">
+
+                            <View className="w-20 h-20 bg-blue-50 dark:bg-blue-900/20 rounded-full items-center justify-center mb-4">
                                 <Calendar size={40} color={Colors.secondary[500]} />
                             </View>
-                            <Text className="text-gray-800 text-lg font-semibold">
+
+                            <Text className="text-lg font-semibold text-gray-800 dark:text-gray-200">
                                 No {activeTab} bookings
                             </Text>
-                            <Text className="text-gray-500 text-center mt-2 px-8">
-                                {activeTab === 'upcoming'
-                                    ? 'Book a mess to see your upcoming reservations here'
-                                    : 'Your past bookings will appear here'}
+
+                            <Text className="text-center mt-2 px-8 text-gray-500 dark:text-gray-400">
+                                {activeTab === "upcoming"
+                                    ? "Book a mess to see your upcoming reservations here"
+                                    : "Your past bookings will appear here"}
                             </Text>
+
                         </View>
                     ) : null
                 }
@@ -194,6 +186,7 @@ export default function BookingsScreen() {
                     isLoading ? <Loading text="Loading bookings..." /> : null
                 }
             />
+
         </SafeAreaView>
     );
 }

@@ -3,6 +3,7 @@ import { View, Text, FlatList, RefreshControl } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Heart } from 'lucide-react-native';
+import { useColorScheme } from 'nativewind';
 import { MessCard, Loading } from '../../components/ui';
 import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
 import { fetchSavedMesses, removeSavedMess } from '../../store/slices/favoriteSlice';
@@ -17,6 +18,7 @@ export default function FavoritesScreen() {
     const [refreshing, setRefreshing] = useState(false);
     const [populatedMesses, setPopulatedMesses] = useState<{ _id: string; mess: Mess }[]>([]);
     const [loadingMesses, setLoadingMesses] = useState(false);
+    const { colorScheme } = useColorScheme();
 
     // Fetch and populate mess details for saved messes
     const populateMessDetails = async () => {
@@ -92,11 +94,17 @@ export default function FavoritesScreen() {
     }
 
     return (
-        <SafeAreaView className="flex-1 bg-gray-200" edges={['top']}>
+        <SafeAreaView
+            style={{
+                flex: 1,
+                backgroundColor: colorScheme === 'dark' ? '#000000' : '#E5E7EB'
+            }}
+            edges={['top']}
+        >
             {/* Header */}
-            <View className="bg-white px-5 py-4 border-b border-gray-100">
-                <Text className="text-2xl font-bold text-gray-800">Favorites</Text>
-                <Text className="text-gray-500 mt-1">
+            <View className={`${colorScheme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100'} px-5 py-4 shadow-lg border-b rounded-t-3xl mx-4`}>
+                <Text className={`text-2xl font-bold ${colorScheme === 'dark' ? 'text-white' : 'text-gray-800'}`}>Favorites</Text>
+                <Text className={`${colorScheme === 'dark' ? 'text-gray-400' : 'text-gray-500'} mt-1`}>
                     {populatedMesses.length} {populatedMesses.length === 1 ? 'mess' : 'messes'} saved
                 </Text>
             </View>
@@ -116,11 +124,11 @@ export default function FavoritesScreen() {
                 )}
                 ListEmptyComponent={() => (
                     <View className="flex-1 items-center justify-center py-20">
-                        <View className="w-20 h-20 bg-red-50 rounded-full items-center justify-center mb-4">
+                        <View className={`w-20 h-20 ${colorScheme === 'dark' ? 'bg-red-900/20' : 'bg-red-50'} rounded-full items-center justify-center mb-4`}>
                             <Heart size={40} color={Colors.error} />
                         </View>
-                        <Text className="text-gray-800 text-lg font-semibold">No Favorites Yet</Text>
-                        <Text className="text-gray-500 text-center mt-2 px-8">
+                        <Text className={`text-lg font-semibold ${colorScheme === 'dark' ? 'text-gray-200' : 'text-gray-800'}`}>No Favorites Yet</Text>
+                        <Text className={`${colorScheme === 'dark' ? 'text-gray-400' : 'text-gray-500'} text-center mt-2 px-8`}>
                             Start exploring and save your favorite messes for quick access
                         </Text>
                     </View>

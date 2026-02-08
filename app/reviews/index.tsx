@@ -23,7 +23,7 @@ export default function MyReviewsScreen() {
         const messImage = typeof mess === 'object' && mess.image?.length > 0 ? mess.image[0].url : null;
 
         return (
-            <View className="bg-white rounded-2xl p-4 mb-4 shadow-sm mx-4">
+            <View className="bg-white dark:bg-gray-900 rounded-2xl p-4 mb-4 shadow-sm mx-4">
                 {/* Header with Mess Info */}
                 <View className="flex-row items-center mb-3">
                     {messImage && (
@@ -33,25 +33,25 @@ export default function MyReviewsScreen() {
                         />
                     )}
                     <View className="flex-1">
-                        <Text className="text-gray-800 font-bold text-base" numberOfLines={1}>
+                        <Text className="text-gray-800 dark:text-white font-bold text-base" numberOfLines={1}>
                             {messName}
                         </Text>
                         <View className="flex-row items-center mt-1">
                             <Calendar size={12} color={Colors.gray[500]} />
-                            <Text className="text-gray-500 text-xs ml-1">
+                            <Text className="text-gray-500 dark:text-gray-400 text-xs ml-1">
                                 {new Date(item.createdAt).toLocaleDateString()}
                             </Text>
                         </View>
                     </View>
-                    <View className="flex-row items-center bg-yellow-50 px-2 py-1 rounded-lg">
+                    <View className="flex-row items-center bg-yellow-50 dark:bg-yellow-900/20 px-2 py-1 rounded-lg">
                         <Star size={14} color={Colors.warning} fill={Colors.warning} />
-                        <Text className="text-yellow-700 font-bold ml-1">{item.rating}</Text>
+                        <Text className="text-yellow-700 dark:text-yellow-500 font-bold ml-1">{item.rating}</Text>
                     </View>
                 </View>
 
                 {/* Review Content */}
-                <View className="bg-gray-50 p-3 rounded-xl">
-                    <Text className="text-gray-700 leading-5">
+                <View className="bg-gray-50 dark:bg-gray-800 p-3 rounded-xl">
+                    <Text className="text-gray-700 dark:text-gray-300 leading-5">
                         {item.comment}
                     </Text>
                 </View>
@@ -61,19 +61,19 @@ export default function MyReviewsScreen() {
 
     if (isLoading && reviews.length === 0) {
         return (
-            <SafeAreaView className="flex-1 bg-gray-50 justify-center items-center">
+            <SafeAreaView className="flex-1 bg-gray-50 dark:bg-black justify-center items-center">
                 <ActivityIndicator size="large" color={Colors.primary[500]} />
             </SafeAreaView>
         );
     }
 
     return (
-        <SafeAreaView className="flex-1 bg-gray-50" edges={['top']}>
+        <SafeAreaView className="flex-1 bg-gray-50 dark:bg-black" edges={['top']}>
             <Stack.Screen
                 options={{
                     headerShown: true,
                     title: 'My Reviews',
-                    headerStyle: { backgroundColor: '#F9FAFB' },
+                    headerStyle: { backgroundColor: '#F9FAFB' }, // Note: headerStyle might need adjustment for dark mode but expo-router handles native headers differently
                     headerShadowVisible: false,
                     headerTintColor: Colors.gray[800],
                 }}
@@ -87,8 +87,8 @@ export default function MyReviewsScreen() {
             ) : reviews.length === 0 ? (
                 <View className="flex-1 justify-center items-center p-6">
                     <MessageSquare size={64} color={Colors.gray[200]} />
-                    <Text className="text-gray-800 font-bold text-lg mt-4">No Reviews Yet</Text>
-                    <Text className="text-gray-500 text-center mt-2">
+                    <Text className="text-gray-800 dark:text-white font-bold text-lg mt-4">No Reviews Yet</Text>
+                    <Text className="text-gray-500 dark:text-gray-400 text-center mt-2">
                         You haven't written any reviews yet. Book a mess and share your experience!
                     </Text>
                 </View>

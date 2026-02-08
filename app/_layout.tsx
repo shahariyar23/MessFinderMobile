@@ -9,19 +9,39 @@ import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
 import { checkAuthStatus, setRedirectPath, clearRedirectPath } from '../store/slices/authSlice';
 import { Loading } from '../components/ui';
 import { useColorScheme } from 'nativewind';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NativeWindStyleSheet } from "nativewind";
+
+NativeWindStyleSheet.setOutput({
+    default: "native",
+});
 
 // ... imports
+import "../global.css";
 
 function RootLayoutNav() {
     const dispatch = useAppDispatch();
     const router = useRouter();
     const segments = useSegments();
     const { isAuthenticated, isLoading, user, redirectPath } = useAppSelector((state) => state.auth);
-    const { colorScheme } = useColorScheme();
+    const { colorScheme, setColorScheme } = useColorScheme();
 
     useEffect(() => {
         dispatch(checkAuthStatus());
-    }, [dispatch]);
+
+        // Load saved color scheme preference
+        const loadColorScheme = async () => {
+            try {
+                const savedScheme = await AsyncStorage.getItem('colorScheme');
+                if (savedScheme === 'dark' || savedScheme === 'light') {
+                    setColorScheme(savedScheme);
+                }
+            } catch (error) {
+                console.log('Error loading color scheme:', error);
+            }
+        };
+        loadColorScheme();
+    }, [dispatch, setColorScheme]);
 
     useEffect(() => {
         if (isLoading) return;
@@ -93,7 +113,6 @@ function RootLayoutNav() {
 
     return (
         <>
-            <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
             <Stack
                 screenOptions={{
                     headerShown: false,

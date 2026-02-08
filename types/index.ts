@@ -91,6 +91,7 @@ export interface MessState {
     error: string | null;
     pagination: Pagination | null;
     filters: MessFilters;
+    homeSliders: HomeSlider[];
 }
 
 export interface MessFilters {

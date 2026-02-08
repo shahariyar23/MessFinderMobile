@@ -12,9 +12,17 @@ import {
     Home,
 } from 'lucide-react-native';
 import { Colors } from '../../constants';
+import { useColorScheme } from 'nativewind';
+
 
 export const Footer = () => {
     const router = useRouter();
+    const { colorScheme } = useColorScheme();
+
+    const iconColor = colorScheme === 'dark' ? Colors.gray[400] : Colors.gray[600];
+    const textColor = colorScheme === 'dark' ? 'text-gray-400' : 'text-gray-600';
+    const bgColor = colorScheme === 'dark' ? 'bg-gray-900' : 'bg-white';
+    const borderColor = colorScheme === 'dark' ? 'border-gray-800' : 'border-gray-200';
 
     const socialLinks = [
         { icon: Facebook, url: 'https://facebook.com', color: '#1877F2' },
@@ -30,25 +38,25 @@ export const Footer = () => {
     ];
 
     return (
-        <View className="relative">
+        <View className={`${bgColor} relative mx-4 rounded-t-3xl mt-6`}>
             {/* Separator */}
-            <View className="h-[1px] bg-gray-200 w-[90%] mx-auto mb-6" />
+            <View className={`h-[1px] ${colorScheme === 'dark' ? 'bg-gray-800' : 'bg-gray-200'} w-[90%] mx-auto mb-6`} />
 
-            <View className="bg-gray-50 pt-10 pb-20 rounded-t-3xl shadow-sm">
+            <View className={`${bgColor} pt-6 pb-20 rounded-t-3xl shadow-sm`}>
                 {/* Brand Section */}
                 <View className="items-center mb-8">
                     {/* Logo & Title Lockup */}
                     <View className="flex-row items-center justify-center gap-3 mb-4">
-                        <View className="bg-primary-100 p-3 rounded-xl rotate-3 shadow-sm">
+                        <View className={`p-3 rounded-xl rotate-3 shadow-sm ${colorScheme === 'dark' ? 'bg-primary-900/30' : 'bg-primary-100'}`}>
                             <Home size={28} color={Colors.primary[600]} />
                         </View>
                         <View>
-                            <Text className="text-2xl font-extrabold text-gray-800 leading-none">Mess</Text>
+                            <Text className={`text-2xl font-extrabold ${colorScheme === 'dark' ? 'text-white' : 'text-gray-800'} leading-none`}>Mess</Text>
                             <Text className="text-2xl font-extrabold text-primary-600 leading-none">Finder</Text>
                         </View>
                     </View>
 
-                    <Text className="text-gray-500 text-center text-sm leading-6 max-w-xs px-4">
+                    <Text className={`${textColor} text-center text-sm leading-6 max-w-xs px-4`}>
                         Your trusted companion for finding the perfect mess accommodation.
                         {'\n'}
                         Simple, fast, and reliable.
@@ -65,7 +73,7 @@ export const Footer = () => {
                                 // router.push(link.path);
                             }}
                         >
-                            <Text className="text-gray-600 font-medium text-sm">{link.label}</Text>
+                            <Text className={`${textColor} font-medium text-sm`}>{link.label}</Text>
                         </TouchableOpacity>
                     ))}
                 </View>
@@ -73,16 +81,16 @@ export const Footer = () => {
                 {/* Contact Info */}
                 <View className="mb-8 space-y-3 items-center">
                     <View className="flex-row items-center gap-2">
-                        <MapPin size={16} color={Colors.gray[500]} />
-                        <Text className="text-gray-600 text-sm">Dhaka, Bangladesh</Text>
+                        <MapPin size={16} color={iconColor} />
+                        <Text className={`${textColor} text-sm`}>Dhaka, Bangladesh</Text>
                     </View>
                     <View className="flex-row items-center gap-2">
-                        <Phone size={16} color={Colors.gray[500]} />
-                        <Text className="text-gray-600 text-sm">+880 1234-567890</Text>
+                        <Phone size={16} color={iconColor} />
+                        <Text className={`${textColor} text-sm`}>+880 1234-567890</Text>
                     </View>
                     <View className="flex-row items-center gap-2">
-                        <Mail size={16} color={Colors.gray[500]} />
-                        <Text className="text-gray-600 text-sm">support@messfinder.com</Text>
+                        <Mail size={16} color={iconColor} />
+                        <Text className={`${textColor} text-sm`}>support@messfinder.com</Text>
                     </View>
                 </View>
 
@@ -92,7 +100,7 @@ export const Footer = () => {
                         <TouchableOpacity
                             key={index}
                             onPress={() => Linking.openURL(social.url)}
-                            className="w-10 h-10 bg-white rounded-full items-center justify-center shadow-sm border border-gray-100"
+                            className={`w-10 h-10 ${colorScheme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-full items-center justify-center shadow-sm border`}
                         >
                             <social.icon size={20} color={social.color} />
                         </TouchableOpacity>
@@ -100,13 +108,13 @@ export const Footer = () => {
                 </View>
 
                 {/* Footer Bottom */}
-                <View className="border-t border-gray-200 pt-6 items-center">
-                    <Text className="text-gray-400 text-xs">
+                <View className={`border-t ${borderColor} pt-6 items-center`}>
+                    <Text className="text-gray-400 text-xs text-center mb-2">
                         © {new Date().getFullYear()} MessFinder. All rights reserved.
                     </Text>
                     <View className="flex-row items-center">
                         <Text className="text-gray-400 text-xs">Made with </Text>
-                        <Heart size={10} color={Colors.error} fill={Colors.error} />
+                        <Heart size={12} color={Colors.error} fill={Colors.error} style={{ marginHorizontal: 4 }} />
                         <Text className="text-gray-400 text-xs"> in Bangladesh</Text>
                     </View>
                 </View>

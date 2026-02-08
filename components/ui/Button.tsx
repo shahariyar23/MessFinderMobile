@@ -31,7 +31,7 @@ export const Button: React.FC<ButtonProps> = ({
             case 'secondary':
                 return 'bg-secondary-500 active:bg-secondary-600';
             case 'outline':
-                return 'bg-transparent border-2 border-primary-500';
+                return 'bg-transparent border-2 border-primary-500 dark:border-primary-400';
             case 'ghost':
                 return 'bg-transparent';
             default:
@@ -46,7 +46,7 @@ export const Button: React.FC<ButtonProps> = ({
                 return 'text-white';
             case 'outline':
             case 'ghost':
-                return 'text-primary-500';
+                return 'text-primary-500 dark:text-primary-400';
             default:
                 return 'text-white';
         }
