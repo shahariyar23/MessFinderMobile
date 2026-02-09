@@ -22,7 +22,7 @@ import { useColorScheme } from 'nativewind';
 import Toast from 'react-native-toast-message';
 import { MessCard, Loading, Button } from '../../components/ui';
 import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
-import { searchMesses, fetchMesses, setFilters } from '../../store/slices/messSlice';
+import { searchMesses, setFilters } from '../../store/slices/messSlice';
 import { saveMess, removeSavedMess } from '../../store/slices/favoriteSlice';
 import { Colors, RoomTypes, GenderPreferences } from '../../constants';
 
@@ -45,25 +45,22 @@ export default function SearchScreen() {
         sortOrder: 'desc' as 'asc' | 'desc',
     });
 
+    // console.log(messes[0])
+
+
     useEffect(() => {
         loadMesses();
-    }, []);
+    }, [localFilters]);
 
     const loadMesses = (page = 1) => {
-        if (searchQuery || localFilters.location) {
-            dispatch(
-                searchMesses({
-                    search: searchQuery,
-                    location: localFilters.location,
-                    sortBy: localFilters.sortBy,
-                    sortOrder: localFilters.sortOrder,
-                    page,
-                    limit: 10,
-                })
-            );
-        } else {
-            dispatch(fetchMesses({ page, limit: 10 }));
-        }
+        dispatch(
+            searchMesses({
+                search: searchQuery,
+                filters: localFilters,
+                page,
+                limit: 10,
+            })
+        );
     };
 
     const handleSearch = () => {
@@ -170,63 +167,83 @@ export default function SearchScreen() {
 
                     {/* Quick Filters */}
                     <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-2">
-                        {['All', 'Available', 'Top Rated', 'Lowest Price'].map((filter) => (
-                            <TouchableOpacity
-                                key={filter}
-                                onPress={() => {
-                                    if (filter === 'Lowest Price') {
-                                        setLocalFilters((prev) => ({ ...prev, sortBy: 'price', sortOrder: 'asc' }));
-                                    } else if (filter === 'Top Rated') {
-                                        setLocalFilters((prev) => ({ ...prev, sortBy: 'rating', sortOrder: 'desc' }));
-                                    }
-                                    loadMesses(1);
-                                }}
-                                className={`px-4 py-2 rounded-full mr-2 ${filter === 'All' ? 'bg-primary-500' : (colorScheme === 'dark' ? 'bg-gray-800' : 'bg-gray-100')
-                                    }`}
-                            >
-                                <Text className={filter === 'All' ? 'text-white font-medium' : (colorScheme === 'dark' ? 'text-gray-300' : 'text-gray-600')}>
-                                    {filter}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
+                        {['All', 'Top Rated', 'Lowest Price'].map((filter) => {
+                            const isActive =
+                                (filter === 'All' && localFilters.sortBy === 'createdAt') ||
+                                (filter === 'Top Rated' && localFilters.sortBy === 'rating') ||
+                                (filter === 'Lowest Price' && localFilters.sortBy === 'price' && localFilters.sortOrder === 'asc');
+
+                            return (
+                                <TouchableOpacity
+                                    key={filter}
+                                    onPress={() => {
+                                        if (filter === 'Lowest Price') {
+                                            setLocalFilters((prev) => ({ ...prev, sortBy: 'price', sortOrder: 'asc' }));
+                                        } else if (filter === 'Top Rated') {
+                                            setLocalFilters((prev) => ({ ...prev, sortBy: 'rating', sortOrder: 'desc' }));
+                                        } else if (filter === 'All') {
+                                            setLocalFilters({
+                                                location: '',
+                                                roomType: '',
+                                                genderPreference: '',
+                                                sortBy: 'createdAt',
+                                                sortOrder: 'desc',
+                                            });
+                                        }
+                                    }}
+                                    className={`px-4 py-2 rounded-full mr-2 ${isActive ? 'bg-primary-500' : (colorScheme === 'dark' ? 'bg-gray-800' : 'bg-gray-100')
+                                        }`}
+                                >
+                                    <Text className={isActive ? 'text-white font-medium' : (colorScheme === 'dark' ? 'text-gray-300' : 'text-gray-600')}>
+                                        {filter}
+                                    </Text>
+                                </TouchableOpacity>
+                            );
+                        })}
                     </ScrollView>
                 </View>
 
                 {/* Results List */}
-                <FlatList
-                    data={messes}
-                    renderItem={({ item }) => (
-                        <View className="px-4 mb-4">
-                            <MessCard
-                                mess={item}
-                                onPress={() => router.push(`/mess/${item._id}`)}
-                                onFavoritePress={user ? () => handleFavoriteToggle(item._id) : undefined}
-                                isFavorite={isFavorite(item._id)}
-                            />
-                        </View>
-                    )}
-                    keyExtractor={(item) => item._id}
-                    contentContainerStyle={{ paddingBottom: 100 }}
-                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-                    onEndReached={loadMore}
-                    onEndReachedThreshold={0.5}
-                    ListEmptyComponent={() => (
-                        !isLoading ? (
-                            <View className="items-center justify-center py-20">
-                                <MapPin size={48} color={Colors.gray[300]} />
-                                <Text className={`${colorScheme === 'dark' ? 'text-gray-400' : 'text-gray-500'} mt-4 text-center text-lg`}>
-                                    No messes found
-                                </Text>
-                                <Text className={`${colorScheme === 'dark' ? 'text-gray-500' : 'text-gray-400'} mt-2 text-center`}>
-                                    Try adjusting your search or filters
-                                </Text>
+                {isLoading && messes.length === 0 ? (
+                    <View className="flex-1 items-center justify-center">
+                        <Loading text="Searching messes..." />
+                    </View>
+                ) : (
+                    <FlatList
+                        data={messes}
+                        renderItem={({ item }) => (
+                            <View className="px-4 mb-4">
+                                <MessCard
+                                    mess={item}
+                                    onPress={() => router.push(`/mess/${item._id}`)}
+                                    onFavoritePress={user ? () => handleFavoriteToggle(item._id) : undefined}
+                                    isFavorite={isFavorite(item._id)}
+                                />
                             </View>
-                        ) : null
-                    )}
-                    ListFooterComponent={() => (
-                        isLoading ? <Loading text="Loading results..." /> : null
-                    )}
-                />
+                        )}
+                        keyExtractor={(item) => item._id}
+                        contentContainerStyle={{ paddingBottom: 100 }}
+                        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+                        onEndReached={loadMore}
+                        onEndReachedThreshold={0.5}
+                        ListEmptyComponent={() => (
+                            !isLoading ? (
+                                <View className="items-center justify-center py-20">
+                                    <MapPin size={48} color={Colors.gray[300]} />
+                                    <Text className={`${colorScheme === 'dark' ? 'text-gray-400' : 'text-gray-500'} mt-4 text-center text-lg`}>
+                                        No messes found
+                                    </Text>
+                                    <Text className={`${colorScheme === 'dark' ? 'text-gray-500' : 'text-gray-400'} mt-2 text-center`}>
+                                        Try adjusting your search or filters
+                                    </Text>
+                                </View>
+                            ) : null
+                        )}
+                        ListFooterComponent={() => (
+                            isLoading ? <Loading text="Loading results..." /> : null
+                        )}
+                    />
+                )}
             </View>
 
             {/* Filter Modal */}

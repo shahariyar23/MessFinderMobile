@@ -10,12 +10,17 @@ const initialState: MessState = {
     pagination: null,
     filters: {},
     homeSliders: [],
+    homeMesses: [],
+    availableMess: 0,
+    totalMessForHome: 0
 };
 
-// Fetch all messes
-export const fetchMesses = createAsyncThunk(
-    'mess/fetchAll',
-    async ({ page = 1, limit = 10, filters }: { page?: number; limit?: number; filters?: MessFilters }, { rejectWithValue }) => {
+
+
+// Fetch home  messes
+export const fetchHomeMesses = createAsyncThunk(
+    'mess/home/fetchAll',
+    async ({ page = 1, limit = 3, filters }: { page?: number; limit?: number; filters?: MessFilters }, { rejectWithValue }) => {
         try {
             const response = await messService.getAllMesses(page, limit, filters);
             return response.data;
@@ -42,18 +47,16 @@ export const fetchMessById = createAsyncThunk(
 export const searchMesses = createAsyncThunk(
     'mess/search',
     async (
-        { search, location, sortBy, sortOrder, page, limit }: {
+        { search, filters, page, limit }: {
             search?: string;
-            location?: string;
-            sortBy?: string;
-            sortOrder?: 'asc' | 'desc';
+            filters?: MessFilters;
             page?: number;
             limit?: number;
         },
         { rejectWithValue }
     ) => {
         try {
-            const response = await messService.searchMesses(search, location, sortBy, sortOrder, page, limit);
+            const response = await messService.searchMesses(search, filters, page, limit);
             return response.data;
         } catch (error: any) {
             return rejectWithValue(error.message || 'Search failed');
@@ -92,25 +95,27 @@ const messSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        // Fetch all messes
+        // Fetch all messes for home page
         builder
-            .addCase(fetchMesses.pending, (state) => {
+            .addCase(fetchHomeMesses.pending, (state) => {
                 state.isLoading = true;
                 state.error = null;
             })
-            .addCase(fetchMesses.fulfilled, (state, action) => {
+            .addCase(fetchHomeMesses.fulfilled, (state, action) => {
                 state.isLoading = false;
+                state.totalMessForHome = action.payload.totalMessForHome;
+                state.availableMess = action.payload.availableMess;
                 if (action.meta.arg.page && action.meta.arg.page > 1) {
                     const newMesses = action.payload.messes || [];
-                    const existingIds = new Set(state.messes.map((m) => m._id));
+                    const existingIds = new Set(state.homeMesses.map((m) => m._id));
                     const uniqueNewMesses = newMesses.filter((m: Mess) => !existingIds.has(m._id));
-                    state.messes = [...state.messes, ...uniqueNewMesses];
+                    state.homeMesses = [...state.homeMesses, ...uniqueNewMesses];
                 } else {
-                    state.messes = action.payload.messes || [];
+                    state.homeMesses = action.payload.messes || [];
                 }
                 state.pagination = action.payload.pagination || null;
             })
-            .addCase(fetchMesses.rejected, (state, action) => {
+            .addCase(fetchHomeMesses.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.payload as string;
             });
@@ -143,6 +148,7 @@ const messSlice = createSlice({
             })
             .addCase(searchMesses.fulfilled, (state, action) => {
                 state.isLoading = false;
+                console.log(action.payload.messes[0], "mess slider")
                 if (action.meta.arg.page && action.meta.arg.page > 1) {
                     const newMesses = action.payload.messes || [];
                     const existingIds = new Set(state.messes.map((m) => m._id));

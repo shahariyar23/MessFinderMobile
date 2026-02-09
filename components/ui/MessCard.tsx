@@ -100,11 +100,11 @@ export const MessCard: React.FC<MessCardProps> = ({
                         <Text className="text-primary-600 font-bold text-sm">
                             ৳{mess.payPerMonth?.toLocaleString()}/mo
                         </Text>
-                        {mess.ratingInfo?.detailedRating && (
+                        {mess.ratingInfo?.individualMessStats?.averageRating && (
                             <View className="flex-row items-center">
                                 <Star size={12} color={Colors.accent[500]} fill={Colors.accent[500]} />
                                 <Text className={`${colorScheme === 'dark' ? 'text-gray-300' : 'text-gray-600'} text-xs ml-1`}>
-                                    {mess.ratingInfo.detailedRating.toFixed(1)}
+                                    {mess.ratingInfo.individualMessStats.averageRating.toFixed(1)}
                                 </Text>
                             </View>
                         )}
@@ -182,10 +182,10 @@ export const MessCard: React.FC<MessCardProps> = ({
                     <View className={`flex-row items-center ${colorScheme === 'dark' ? 'bg-accent-900/20' : 'bg-accent-50'} px-3 py-2 rounded-xl`}>
                         <Star size={16} color={Colors.accent[500]} fill={Colors.accent[500]} />
                         <Text className={`${colorScheme === 'dark' ? 'text-white' : 'text-gray-800'} font-semibold ml-1`}>
-                            {mess.ratingInfo?.detailedRating?.toFixed(1) || 'New'}
+                            {mess.ratingInfo?.individualMessStats?.averageRating?.toFixed(1) || 'New'}
                         </Text>
                         <Text className={`${colorScheme === 'dark' ? 'text-gray-400' : 'text-gray-500'} text-xs ml-1`}>
-                            ({mess.ratingInfo?.totalReviews || 0})
+                            ({mess.ratingInfo?.individualMessStats?.totalReviews || 0})
                         </Text>
                     </View>
                 </View>

@@ -53,10 +53,18 @@ export interface MessOwner {
 }
 
 export interface RatingInfo {
-    totalReviews: number;
-    detailedRating?: number;
-    averageRating?: number;
-    ratingDistribution?: Record<string, number>;
+    individualMessStats: {
+        totalReviews: number;
+        averageRating: number;
+        message: string;
+    };
+    ownerWideStats: {
+        averageRating: number;
+        totalMesses: number;
+        totalReviews: number;
+        message: string;
+        ratingDistribution?: Record<string, number>;
+    };
 }
 
 export interface Mess {
@@ -92,6 +100,9 @@ export interface MessState {
     pagination: Pagination | null;
     filters: MessFilters;
     homeSliders: HomeSlider[];
+    homeMesses: Mess[];
+    totalMessForHome: number;
+    availableMess: number;
 }
 
 export interface MessFilters {

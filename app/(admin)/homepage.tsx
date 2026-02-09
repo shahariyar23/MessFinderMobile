@@ -29,7 +29,7 @@ export default function HomepageManagement() {
         try {
             // TODO: Replace with actual API call
             // await adminService.addHomeSlider({ image: newSliderUrl });
-            console.log('Adding slider:', newSliderUrl);
+            // console.log('Adding slider:', newSliderUrl);
             setNewSliderUrl('');
             setShowAddModal(false);
         } catch (error) {
@@ -47,7 +47,7 @@ export default function HomepageManagement() {
                     try {
                         // TODO: API call
                         // await adminService.deleteHomeSlider(sliderId);
-                        console.log('Deleting slider:', sliderId);
+                        // console.log('Deleting slider:', sliderId);
                     } catch (error) {
                         Alert.alert('Error', 'Failed to delete slider');
                     }
@@ -85,7 +85,7 @@ export default function HomepageManagement() {
                             {sliders.map((slider, index) => (
                                 <View key={slider._id} className="bg-white rounded-2xl overflow-hidden shadow-sm">
                                     <Image
-                                        source={{ uri: slider.image?.url }}
+                                        source={{ uri: slider.backgroundImage?.url }}
                                         className="w-full h-40"
                                         resizeMode="cover"
                                     />

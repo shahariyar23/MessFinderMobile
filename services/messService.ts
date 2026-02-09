@@ -37,11 +37,10 @@ export const messService = {
     },
 
     // Search messes with sorting
+    // Search messes with sorting and filtering
     async searchMesses(
         search?: string,
-        location?: string,
-        sortBy?: string,
-        sortOrder?: 'asc' | 'desc',
+        filters?: MessFilters,
         page = 1,
         limit = 10
     ): Promise<ApiResponse<any>> {
@@ -51,9 +50,29 @@ export const messService = {
         });
 
         if (search) params.append('search', search);
-        if (location) params.append('location', location);
-        if (sortBy) params.append('sortBy', sortBy);
-        if (sortOrder) params.append('sortOrder', sortOrder);
+
+        // Add filters
+        if (filters?.location) params.append('location', filters.location);
+        if (filters?.minPrice) params.append('minPrice', filters.minPrice.toString());
+        if (filters?.maxPrice) params.append('maxPrice', filters.maxPrice.toString());
+        if (filters?.roomType) params.append('roomType', filters.roomType);
+        if (filters?.genderPreference) params.append('genderPreference', filters.genderPreference);
+        if (filters?.sortBy) params.append('sortBy', filters.sortBy);
+
+        // Sort order is implicitly handled by backend for some cases, but good to pass if needed
+        // The backend controller seems to derive sort direction from sortBy for some cases, 
+        // but let's check if we need to pass it explicitly. 
+        // The controller uses `sortBy` to determine the sort field and direction in the switch case.
+        // It doesn't explicitly read `sortOrder` for all cases in the snippet provided, 
+        // but `price` case is fixed to asc, `rating` to desc.
+        // However, `getAllMess` (previous) did. 
+        // The new `advancedSearchMess` controller snippet:
+        // switch (sortBy) { case "price": ... (asc) ... case "rating": ... (desc) ... }
+        // It DOES NOT seem to use `sortOrder` from query for these specific cases in the snippet.
+        // But for "latest", it does `desc` by default.
+        // The frontend `localFilters` has `sortOrder`. 
+        // Let's pass it anyway in case the backend is updated to support it or for "latest" if it becomes dynamic.
+        if (filters?.sortOrder) params.append('sortOrder', filters.sortOrder);
 
         const response = await api.get(`/mess/get-mess-search-with-sort?${params.toString()}`);
         return response.data;

@@ -16,11 +16,9 @@ import { useColorScheme } from 'nativewind';
 import Toast from 'react-native-toast-message';
 import { MessCard, Loading, Footer } from '../../components/ui';
 import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
-import { fetchMesses, fetchHomeSliders } from '../../store/slices/messSlice';
+import { fetchHomeSliders, fetchHomeMesses } from '../../store/slices/messSlice';
 import { fetchSavedMesses, saveMess, removeSavedMess } from '../../store/slices/favoriteSlice';
-import messService from '../../services/messService';
 import { Colors } from '../../constants';
-import { Mess, HomeSlider } from '../../types';
 
 const { width } = Dimensions.get('window');
 
@@ -28,7 +26,7 @@ export default function HomeScreen() {
     const router = useRouter();
     const dispatch = useAppDispatch();
     const { user } = useAppSelector((state) => state.auth);
-    const { messes, homeSliders: sliders, isLoading } = useAppSelector((state) => state.mess);
+    const { messes, totalMessForHome, homeMesses, homeSliders: sliders, isLoading, availableMess } = useAppSelector((state) => state.mess);
     const savedMesses = useAppSelector((state) => state.favorites?.savedMesses ?? []);
     const { colorScheme } = useColorScheme();
 
@@ -36,14 +34,17 @@ export default function HomeScreen() {
     const [activeSlide, setActiveSlide] = useState(0);
     const flatListRef = useRef<FlatList>(null);
 
+    console
+    // .log(pagination, "home mess")
+
     useEffect(() => {
         loadData();
     }, []);
 
     const loadData = async () => {
-        dispatch(fetchMesses({ page: 1, limit: 3 }));
         dispatch(fetchSavedMesses());
         dispatch(fetchHomeSliders());
+        dispatch(fetchHomeMesses({ page: 1, limit: 3 }));
     };
 
     const onRefresh = useCallback(async () => {
@@ -174,14 +175,17 @@ export default function HomeScreen() {
                 {/* Quick Stats */}
                 <View className="flex-row px-4 mx-auto gap-3">
                     <View className={`flex-1 ${colorScheme === 'dark' ? 'bg-gray-900 border border-gray-800' : 'bg-primary-50'} rounded-2xl p-4`}>
-                        <Text className={`${colorScheme === 'dark' ? 'text-primary-400' : 'text-primary-600'} text-2xl font-bold`}>
-                            {messes.filter((m) => m.status === 'free').length}+
-                        </Text>
-                        <Text className={`${colorScheme === 'dark' ? 'text-gray-400' : 'text-primary-700'} text-sm`}>Available Messes</Text>
+                        <TouchableOpacity
+                            onPress={() => router.push('/(tabs)/search')}>
+                            <Text className={`${colorScheme === 'dark' ? 'text-primary-400' : 'text-primary-600'} text-2xl font-bold`}>
+                                {availableMess}
+                            </Text>
+                            <Text className={`${colorScheme === 'dark' ? 'text-gray-400' : 'text-primary-700'} text-sm`}>Available Messes</Text>
+                        </TouchableOpacity>
                     </View>
                     <View className={`flex-1 ${colorScheme === 'dark' ? 'bg-gray-900 border border-gray-800' : 'bg-secondary-50'} rounded-2xl p-4`}>
-                        <Text className={`${colorScheme === 'dark' ? 'text-secondary-400' : 'text-secondary-600'} text-2xl font-bold`}>{messes.length}+</Text>
-                        <Text className={`${colorScheme === 'dark' ? 'text-gray-400' : 'text-secondary-700'} text-sm`}>Total Listings</Text>
+                        <Text className={`${colorScheme === 'dark' ? 'text-secondary-400' : 'text-secondary-600'} text-2xl font-bold`}>{totalMessForHome}</Text>
+                        <Text className={`${colorScheme === 'dark' ? 'text-gray-400' : 'text-secondary-700'} text-sm`}>Total Messes</Text>
                     </View>
                 </View>
 
@@ -208,7 +212,7 @@ export default function HomeScreen() {
                             </Text>
                         </View>
                     ) : (
-                        messes.map((mess) => (
+                        homeMesses.map((mess) => (
                             <MessCard
                                 key={mess._id}
                                 mess={mess}
