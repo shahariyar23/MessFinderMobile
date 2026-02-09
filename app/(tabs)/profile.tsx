@@ -300,7 +300,7 @@ export default function ProfileScreen(): ReactNode {
             }}
             edges={['top']}
         >
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
                 {/* Header */}
 
                 <View className={`${colorScheme === 'dark' ? 'bg-gray-900' : 'bg-white'} px-6 py-8 items-center mx-2 rounded-3xl`}>

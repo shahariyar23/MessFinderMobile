@@ -200,7 +200,7 @@ export default function HomeScreen() {
 
                     {isLoading ? (
                         <Loading text="Loading messes..." />
-                    ) : messes.length === 0 ? (
+                    ) : sliders.length === 0 ? (
                         <View className={`${colorScheme === 'dark' ? 'bg-gray-900' : 'bg-white'} rounded-2xl p-8 items-center`}>
                             <MapPin size={48} color={Colors.gray[300]} />
                             <Text className={`${colorScheme === 'dark' ? 'text-gray-400' : 'text-gray-500'} mt-4 text-center`}>
@@ -225,6 +225,7 @@ export default function HomeScreen() {
                 <Footer />
 
                 {/* Bottom Padding for Tab Bar */}
+                <View style={{ height: 100 }} />
             </ScrollView>
         </SafeAreaView>
     );

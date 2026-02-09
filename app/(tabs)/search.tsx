@@ -206,7 +206,7 @@ export default function SearchScreen() {
                         </View>
                     )}
                     keyExtractor={(item) => item._id}
-                    contentContainerStyle={{ paddingBottom: 20 }}
+                    contentContainerStyle={{ paddingBottom: 100 }}
                     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                     onEndReached={loadMore}
                     onEndReachedThreshold={0.5}

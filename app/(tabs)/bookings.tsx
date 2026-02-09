@@ -156,7 +156,7 @@ export default function BookingsScreen() {
             <FlatList
                 data={bookings}
                 keyExtractor={(item) => item._id}
-                contentContainerStyle={{ padding: 16, flexGrow: 1 }}
+                contentContainerStyle={{ padding: 16, flexGrow: 1, paddingBottom: 100 }}
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                 }
