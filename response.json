@@ -1,0 +1,105 @@
+﻿{
+    "success":  true,
+    "message":  "Messes retrieved successfully",
+    "data":  {
+                 "messes":  [
+                                {
+                                    "_id":  "696e010464a861d897c0ede1",
+                                    "title":  "Zarin Tasnim Picture add",
+                                    "description":  "peaceful and beautiful home",
+                                    "owner_id":  "6958a81d7f38c91db9a9c297",
+                                    "address":  "sector 11 road 32 house 15 appartment lift 3a",
+                                    "status":  "free",
+                                    "availableFrom":  "2026-01-19T18:00:00.000Z",
+                                    "advancePaymentMonth":  2,
+                                    "payPerMonth":  90000,
+                                    "facilities":  [
+                                                       "Wi-Fi",
+                                                       "Water Filter",
+                                                       "Laundry",
+                                                       "Meals",
+                                                       "Lifts",
+                                                       "Freezer"
+                                                   ],
+                                    "roomType":  "Single",
+                                    "roomFeatures":  [
+                                                         "Master Bed",
+                                                         "Attached Bath",
+                                                         "AC",
+                                                         "Furnished",
+                                                         "Balcony",
+                                                         "Geyser"
+                                                     ],
+                                    "genderPreference":  "Female",
+                                    "contact":  "01761208866",
+                                    "image":  [
+                                                  {
+                                                      "url":  "https://res.cloudinary.com/mostakshahariyar/image/upload/v1768816899/mess-listings/oai657z9iygdw3qt7iui.jpg",
+                                                      "public_id":  "mess-listings/oai657z9iygdw3qt7iui",
+                                                      "_id":  "696e010464a861d897c0ede2"
+                                                  },
+                                                  {
+                                                      "url":  "https://res.cloudinary.com/mostakshahariyar/image/upload/v1768816898/mess-listings/jgkaece52xadcyycfwwq.jpg",
+                                                      "public_id":  "mess-listings/jgkaece52xadcyycfwwq",
+                                                      "_id":  "696e010464a861d897c0ede3"
+                                                  },
+                                                  {
+                                                      "url":  "https://res.cloudinary.com/mostakshahariyar/image/upload/v1768816897/mess-listings/mg9sapeprzrapw59z7ok.jpg",
+                                                      "public_id":  "mess-listings/mg9sapeprzrapw59z7ok",
+                                                      "_id":  "696e010464a861d897c0ede4"
+                                                  }
+                                              ],
+                                    "view":  55,
+                                    "createdAt":  "2026-01-19T10:01:40.779Z",
+                                    "updatedAt":  "2026-02-09T21:33:37.726Z",
+                                    "__v":  0,
+                                    "ratingInfo":  {
+                                                       "ownerWideStats":  {
+                                                                              "averageRating":  0,
+                                                                              "totalReviews":  0,
+                                                                              "totalMesses":  0,
+                                                                              "ratingDistribution":  {
+                                                                                                         "1":  0,
+                                                                                                         "2":  0,
+                                                                                                         "3":  0,
+                                                                                                         "4":  0,
+                                                                                                         "5":  0
+                                                                                                     },
+                                                                              "message":  "No reviews yet"
+                                                                          },
+                                                       "individualMessStats":  {
+                                                                                   "averageRating":  0,
+                                                                                   "totalReviews":  0,
+                                                                                   "message":  "No reviews yet for this specific mess"
+                                                                               }
+                                                   },
+                                    "owner_name":  "Shown",
+                                    "owner_email":  "22203208@iubat.edu",
+                                    "owner_phone":  "01761208862"
+                                }
+                            ],
+                 "pagination":  {
+                                    "currentPage":  1,
+                                    "totalPages":  18,
+                                    "totalMesses":  18,
+                                    "hasNext":  true,
+                                    "hasPrev":  false
+                                },
+                 "filters":  {
+                                 "search":  "",
+                                 "location":  "",
+                                 "minPrice":  "",
+                                 "maxPrice":  "",
+                                 "roomType":  "",
+                                 "genderPreference":  "",
+                                 "sortBy":  "latest",
+                                 "status":  "free"
+                             },
+                 "reviewInfo":  {
+                                    "note":  "Ratings are based on reviews across all messes by the same owner",
+                                    "totalOwnersWithReviews":  0,
+                                    "totalReviews":  0
+                                }
+             },
+    "statusCode":  200
+}

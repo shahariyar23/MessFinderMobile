@@ -6,7 +6,8 @@ import {
     SavedMess,
     HomeSlider,
     Review,
-    CreateReviewData
+    CreateReviewData,
+    GetMessReviewsResponse
 } from '../types';
 
 export const messService = {
@@ -125,8 +126,13 @@ export const messService = {
     // === Reviews ===
 
     // Get reviews for a mess
-    async getMessReviews(messId: string): Promise<ApiResponse<Review[]>> {
-        const response = await api.get(`/review/get-review-mess/${messId}`);
+    // Get reviews for a mess
+    async getMessReviews(messId: string, page = 1, limit = 10): Promise<ApiResponse<GetMessReviewsResponse>> {
+        const params = new URLSearchParams({
+            page: page.toString(),
+            limit: limit.toString(),
+        });
+        const response = await api.get(`/review/get-review-mess/${messId}?${params.toString()}`);
         return response.data;
     },
 

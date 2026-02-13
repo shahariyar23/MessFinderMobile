@@ -53,7 +53,7 @@ export default function MessDetailScreen() {
     const [viewCount, setViewCount] = useState(0);
 
     const hasFetchedRef = useRef(false);
-
+    // console.log('currentMess', currentMess);
     useEffect(() => {
         // Wait for auth check to complete
         if (authLoading) return;
@@ -82,9 +82,16 @@ export default function MessDetailScreen() {
                     console.error('❌ Failed to load mess details:', error);
                     setLoadError(error || 'Failed to load mess details');
                 });
-            loadReviews();
+            // loadReviews(); // We use the reviews from mess details now
         }
     }, [id, isAuthenticated, authLoading]);
+
+    // Update reviews when currentMess changes
+    useEffect(() => {
+        if (currentMess?.ratingInfo?.recentReviews) {
+            setReviews(currentMess.ratingInfo.recentReviews);
+        }
+    }, [currentMess]);
 
     useEffect(() => {
         // Handle both cases: mess_id could be an object with _id or just a string ID
@@ -105,18 +112,16 @@ export default function MessDetailScreen() {
         }
     }, [isAuthenticated, dispatch]);
 
-    const loadReviews = async () => {
-        try {
-            console.log('🔍 Fetching reviews for mess:', id);
-            const response = await messService.getMessReviews(id!);
-            if (response.success) {
-                console.log('✅ Reviews loaded:', response.data?.length || 0);
-                setReviews(response.data);
-            }
-        } catch (err) {
-            console.log('❌ Failed to load reviews:', err);
-        }
-    };
+    // const loadReviews = async () => {
+    //     try {
+    //         const response = await messService.getMessReviews(id!);
+    //         if (response.success) {
+    //             setReviews(response.data.reviews);
+    //         }
+    //     } catch (err) {
+    //         console.log('❌ Failed to load reviews:', err);
+    //     }
+    // };
 
     const handleFavoriteToggle = () => {
         const messName = currentMess?.title || 'Mess';
@@ -297,8 +302,8 @@ export default function MessDetailScreen() {
                         </View>
                         <View className="items-end">
                             <Rating
-                                rating={currentMess.ratingInfo?.detailedRating || 0}
-                                reviewCount={currentMess.ratingInfo?.totalReviews}
+                                rating={currentMess.ratingInfo?.individualMessStats?.averageRating || currentMess.ratingInfo?.ownerWideStats?.averageRating || 0}
+                                reviewCount={currentMess.ratingInfo?.individualMessStats?.totalReviews || currentMess.ratingInfo?.ownerWideStats?.totalReviews}
                                 size="lg"
                             />
                         </View>
@@ -395,7 +400,7 @@ export default function MessDetailScreen() {
                                 Reviews ({reviews.length})
                             </Text>
                             {reviews.length > 0 && (
-                                <TouchableOpacity>
+                                <TouchableOpacity onPress={() => router.push(`/mess/reviews/${id}`)}>
                                     <Text className="text-primary-600 font-medium">See All</Text>
                                 </TouchableOpacity>
                             )}
@@ -405,12 +410,20 @@ export default function MessDetailScreen() {
                                 <View key={review._id} className={`${colorScheme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} rounded-xl p-4 mb-2`}>
                                     <View className="flex-row items-center mb-2">
                                         <Avatar
-                                            name={typeof review.user_id === 'object' ? review.user_id.name : 'User'}
+                                            name={
+                                                typeof (review.user || review.user_id) === 'object'
+                                                    ? ((review.user || review.user_id) as any).name
+                                                    : 'User'
+                                            }
                                             size="sm"
                                         />
                                         <View className="flex-1 ml-2">
                                             <Text className={`${colorScheme === 'dark' ? 'text-white' : 'text-gray-800'} font-medium`}>
-                                                {typeof review.user_id === 'object' ? review.user_id.name : 'User'}
+                                                {
+                                                    typeof (review.user || review.user_id) === 'object'
+                                                        ? ((review.user || review.user_id) as any).name
+                                                        : 'User'
+                                                }
                                             </Text>
                                         </View>
                                         <Rating rating={review.rating} size="sm" showValue={false} />

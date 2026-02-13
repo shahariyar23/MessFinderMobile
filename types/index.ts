@@ -65,6 +65,7 @@ export interface RatingInfo {
         message: string;
         ratingDistribution?: Record<string, number>;
     };
+    recentReviews?: Review[];
 }
 
 export interface Mess {
@@ -178,8 +179,10 @@ export interface BookingState {
 // Review Types
 export interface Review {
     _id: string;
-    user_id: User | string;
-    mess_id: Mess | string;
+    user_id?: User | string;
+    user?: User | string;
+    mess_id?: Mess | string;
+    mess?: Mess | string;
     rating: number;
     comment: string;
     status: 'active' | 'reported' | 'hidden';
@@ -231,6 +234,21 @@ export interface PaginatedResponse<T> {
         bookings?: T[];
         pagination: Pagination;
         counts?: any;
+    };
+}
+
+export interface GetMessReviewsResponse {
+    reviews: Review[];
+    messDetails: {
+        title: string;
+        address: string;
+        averageRating: number;
+    };
+    pagination: Pagination;
+    filters: {
+        rating: string | number;
+        sortBy: string;
+        sortOrder: string;
     };
 }
 
