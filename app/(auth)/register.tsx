@@ -10,6 +10,7 @@ import {
 import { Link, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Mail, Lock, User, Phone, Building, GraduationCap } from 'lucide-react-native';
+import { useColorScheme } from 'nativewind';
 import Toast from 'react-native-toast-message';
 import { Button, Input } from '../../components/ui';
 import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
@@ -20,6 +21,7 @@ export default function RegisterScreen() {
     const router = useRouter();
     const dispatch = useAppDispatch();
     const { isLoading } = useAppSelector((state) => state.auth);
+    const { colorScheme } = useColorScheme();
 
     const [formData, setFormData] = useState({
         name: '',
@@ -101,7 +103,10 @@ export default function RegisterScreen() {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-white">
+        <SafeAreaView
+            className="flex-1"
+            style={{ backgroundColor: colorScheme === 'dark' ? '#111827' : '#ffffff' }}
+        >
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 className="flex-1"
@@ -117,21 +122,21 @@ export default function RegisterScreen() {
                             <View className="w-16 h-16 bg-primary-500 rounded-2xl items-center justify-center mb-3">
                                 <Text className="text-white text-2xl font-bold">MF</Text>
                             </View>
-                            <Text className="text-2xl font-bold text-gray-800">Create Account</Text>
-                            <Text className="text-gray-500 mt-1 text-center">
+                            <Text className="text-2xl font-bold text-gray-800 dark:text-white">Create Account</Text>
+                            <Text className="text-gray-500 dark:text-gray-400 mt-1 text-center">
                                 Join Mess Finder to find your ideal accommodation
                             </Text>
                         </View>
 
                         {/* Role Selection */}
                         <View className="mb-5">
-                            <Text className="text-gray-700 text-sm font-medium mb-2">I am a</Text>
+                            <Text className="text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">I am a</Text>
                             <View className="flex-row gap-3">
                                 <TouchableOpacity
                                     onPress={() => updateFormData('role', 'student')}
                                     className={`flex-1 flex-row items-center justify-center py-3 rounded-xl border-2 ${formData.role === 'student'
-                                            ? 'border-primary-500 bg-primary-50'
-                                            : 'border-gray-200 bg-gray-50'
+                                        ? 'border-primary-500 bg-primary-50'
+                                        : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'
                                         }`}
                                 >
                                     <GraduationCap
@@ -139,7 +144,7 @@ export default function RegisterScreen() {
                                         color={formData.role === 'student' ? Colors.primary[500] : Colors.gray[500]}
                                     />
                                     <Text
-                                        className={`ml-2 font-medium ${formData.role === 'student' ? 'text-primary-600' : 'text-gray-600'
+                                        className={`ml-2 font-medium ${formData.role === 'student' ? 'text-primary-600' : 'text-gray-600 dark:text-gray-300'
                                             }`}
                                     >
                                         Student
@@ -148,8 +153,8 @@ export default function RegisterScreen() {
                                 <TouchableOpacity
                                     onPress={() => updateFormData('role', 'owner')}
                                     className={`flex-1 flex-row items-center justify-center py-3 rounded-xl border-2 ${formData.role === 'owner'
-                                            ? 'border-primary-500 bg-primary-50'
-                                            : 'border-gray-200 bg-gray-50'
+                                        ? 'border-primary-500 bg-primary-50'
+                                        : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'
                                         }`}
                                 >
                                     <Building
@@ -157,7 +162,7 @@ export default function RegisterScreen() {
                                         color={formData.role === 'owner' ? Colors.primary[500] : Colors.gray[500]}
                                     />
                                     <Text
-                                        className={`ml-2 font-medium ${formData.role === 'owner' ? 'text-primary-600' : 'text-gray-600'
+                                        className={`ml-2 font-medium ${formData.role === 'owner' ? 'text-primary-600' : 'text-gray-600 dark:text-gray-300'
                                             }`}
                                     >
                                         Mess Owner
@@ -229,7 +234,7 @@ export default function RegisterScreen() {
 
                         {/* Login Link */}
                         <View className="flex-row justify-center mt-4">
-                            <Text className="text-gray-600">Already have an account? </Text>
+                            <Text className="text-gray-600 dark:text-gray-400">Already have an account? </Text>
                             <Link href="/(auth)/login" asChild>
                                 <TouchableOpacity>
                                     <Text className="text-primary-600 font-semibold">Sign In</Text>

@@ -10,6 +10,7 @@ import {
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ArrowLeft, Mail, Lock, KeyRound } from 'lucide-react-native';
+import { useColorScheme } from 'nativewind';
 import Toast from 'react-native-toast-message';
 import { Button, Input } from '../../components/ui';
 import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
@@ -22,6 +23,7 @@ export default function ForgotPasswordScreen() {
     const router = useRouter();
     const dispatch = useAppDispatch();
     const { isLoading } = useAppSelector((state) => state.auth);
+    const { colorScheme } = useColorScheme();
 
     const [step, setStep] = useState<Step>('email');
     const [email, setEmail] = useState('');
@@ -103,11 +105,11 @@ export default function ForgotPasswordScreen() {
                 return (
                     <>
                         <View className="items-center mb-8">
-                            <View className="w-16 h-16 bg-primary-100 rounded-full items-center justify-center mb-4">
+                            <View className="w-16 h-16 bg-primary-100 dark:bg-primary-900 rounded-full items-center justify-center mb-4">
                                 <Mail size={32} color={Colors.primary[500]} />
                             </View>
-                            <Text className="text-2xl font-bold text-gray-800">Forgot Password?</Text>
-                            <Text className="text-gray-500 mt-2 text-center">
+                            <Text className="text-2xl font-bold text-gray-800 dark:text-white">Forgot Password?</Text>
+                            <Text className="text-gray-500 dark:text-gray-400 mt-2 text-center">
                                 Enter your email and we'll send you a reset code
                             </Text>
                         </View>
@@ -135,11 +137,11 @@ export default function ForgotPasswordScreen() {
                 return (
                     <>
                         <View className="items-center mb-8">
-                            <View className="w-16 h-16 bg-primary-100 rounded-full items-center justify-center mb-4">
+                            <View className="w-16 h-16 bg-primary-100 dark:bg-primary-900 rounded-full items-center justify-center mb-4">
                                 <KeyRound size={32} color={Colors.primary[500]} />
                             </View>
-                            <Text className="text-2xl font-bold text-gray-800">Enter Code</Text>
-                            <Text className="text-gray-500 mt-2 text-center">
+                            <Text className="text-2xl font-bold text-gray-800 dark:text-white">Enter Code</Text>
+                            <Text className="text-gray-500 dark:text-gray-400 mt-2 text-center">
                                 We sent a 6-digit code to {email}
                             </Text>
                         </View>
@@ -165,11 +167,11 @@ export default function ForgotPasswordScreen() {
                 return (
                     <>
                         <View className="items-center mb-8">
-                            <View className="w-16 h-16 bg-primary-100 rounded-full items-center justify-center mb-4">
+                            <View className="w-16 h-16 bg-primary-100 dark:bg-primary-900 rounded-full items-center justify-center mb-4">
                                 <Lock size={32} color={Colors.primary[500]} />
                             </View>
-                            <Text className="text-2xl font-bold text-gray-800">New Password</Text>
-                            <Text className="text-gray-500 mt-2 text-center">
+                            <Text className="text-2xl font-bold text-gray-800 dark:text-white">New Password</Text>
+                            <Text className="text-gray-500 dark:text-gray-400 mt-2 text-center">
                                 Create a strong new password
                             </Text>
                         </View>
@@ -204,7 +206,10 @@ export default function ForgotPasswordScreen() {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-white">
+        <SafeAreaView
+            className="flex-1"
+            style={{ backgroundColor: colorScheme === 'dark' ? '#111827' : '#ffffff' }}
+        >
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 className="flex-1"
@@ -226,7 +231,7 @@ export default function ForgotPasswordScreen() {
                                     setStep('code');
                                 }
                             }}
-                            className="w-10 h-10 bg-gray-100 rounded-full items-center justify-center mb-6"
+                            className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-full items-center justify-center mb-6"
                         >
                             <ArrowLeft size={20} color={Colors.gray[700]} />
                         </TouchableOpacity>
@@ -237,8 +242,8 @@ export default function ForgotPasswordScreen() {
                                 <View
                                     key={s}
                                     className={`w-8 h-1 mx-1 rounded-full ${i <= ['email', 'code', 'password'].indexOf(step)
-                                            ? 'bg-primary-500'
-                                            : 'bg-gray-200'
+                                        ? 'bg-primary-500'
+                                        : 'bg-gray-200 dark:bg-gray-700'
                                         }`}
                                 />
                             ))}

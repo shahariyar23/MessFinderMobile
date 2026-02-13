@@ -11,6 +11,7 @@ import { Colors } from '../../../constants';
 
 export default function ReviewsScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
+    console.log(id, 'id for reviews');
     const router = useRouter();
     const { colorScheme } = useColorScheme();
 

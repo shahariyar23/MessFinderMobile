@@ -11,6 +11,7 @@ import {
 import { Link, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Mail, Lock } from 'lucide-react-native';
+import { useColorScheme } from 'nativewind';
 import Toast from 'react-native-toast-message';
 import { Button, Input } from '../../components/ui';
 import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
@@ -21,6 +22,7 @@ export default function LoginScreen() {
     const router = useRouter();
     const dispatch = useAppDispatch();
     const { isLoading, error } = useAppSelector((state) => state.auth);
+    const { colorScheme } = useColorScheme();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -72,7 +74,10 @@ export default function LoginScreen() {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-white">
+        <SafeAreaView
+            className="flex-1"
+            style={{ backgroundColor: colorScheme === 'dark' ? '#111827' : '#ffffff' }}
+        >
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 className="flex-1"
@@ -88,8 +93,8 @@ export default function LoginScreen() {
                             <View className="w-20 h-20 bg-primary-500 rounded-3xl items-center justify-center mb-4 shadow-lg">
                                 <Text className="text-white text-3xl font-bold">MF</Text>
                             </View>
-                            <Text className="text-3xl font-bold text-gray-800">Welcome Back</Text>
-                            <Text className="text-gray-500 mt-2 text-center">
+                            <Text className="text-3xl font-bold text-gray-800 dark:text-white">Welcome Back</Text>
+                            <Text className="text-gray-500 dark:text-gray-400 mt-2 text-center">
                                 Sign in to find your perfect mess accommodation
                             </Text>
                         </View>
@@ -135,14 +140,14 @@ export default function LoginScreen() {
 
                         {/* Divider */}
                         <View className="flex-row items-center my-6">
-                            <View className="flex-1 h-px bg-gray-200" />
-                            <Text className="mx-4 text-gray-500">or</Text>
-                            <View className="flex-1 h-px bg-gray-200" />
+                            <View className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
+                            <Text className="mx-4 text-gray-500 dark:text-gray-400">or</Text>
+                            <View className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
                         </View>
 
                         {/* Register Link */}
                         <View className="flex-row justify-center">
-                            <Text className="text-gray-600">Don't have an account? </Text>
+                            <Text className="text-gray-600 dark:text-gray-400">Don't have an account? </Text>
                             <Link href="/(auth)/register" asChild>
                                 <TouchableOpacity>
                                     <Text className="text-primary-600 font-semibold">Sign Up</Text>
